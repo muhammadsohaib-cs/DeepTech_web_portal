@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { motion } from 'framer-motion';
 import Button from '../components/Button';
@@ -7,6 +8,7 @@ import { TechCore } from '../components/AnimatedTech';
 
 const Profile: React.FC = () => {
     const { user, login } = useAuth();
+    const navigate = useNavigate();
     const [name, setName] = useState(user?.name || '');
     const [email, setEmail] = useState(user?.email || ''); // Usually readonly
     const [currentPassword, setCurrentPassword] = useState('');
@@ -57,9 +59,17 @@ const Profile: React.FC = () => {
 
             // Update local user context
             login(data.user);
-            setMessage({ type: 'success', text: 'Profile updated successfully!' });
+            setMessage({ type: 'success', text: 'Profile updated successfully! Redirecting...' });
+
+            // Clear password fields
             setCurrentPassword('');
             setNewPassword('');
+
+            // Redirect to home page after 2 seconds
+            setTimeout(() => {
+                navigate('/');
+            }, 2000);
+
         } catch (err: any) {
             setMessage({ type: 'error', text: err.message });
         } finally {

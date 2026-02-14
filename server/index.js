@@ -33,6 +33,11 @@ const transporter = nodemailer.createTransport({
 });
 
 // --- CLOUDINARY CONFIGURATION ---
+console.log("--- Cloudinary Config Debug ---");
+console.log("Cloud Name:", process.env.CLOUDINARY_CLOUD_NAME);
+console.log("API Key Length:", process.env.CLOUDINARY_API_KEY ? process.env.CLOUDINARY_API_KEY.length : "Missing");
+console.log("-------------------------------");
+
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
     api_key: process.env.CLOUDINARY_API_KEY,
