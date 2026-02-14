@@ -3,6 +3,8 @@ import { motion } from 'framer-motion';
 import { Mail, Lock, ArrowRight, Eye, EyeOff, X } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import Button from '../components/Button';
+import { useAuth } from '../context/AuthContext';
+// ... (imports remain)
 import { TechCore } from '../components/AnimatedTech'; // Reusing animation for cohesion
 
 const fadeInUp = {
@@ -11,6 +13,7 @@ const fadeInUp = {
 };
 
 const Login: React.FC = () => {
+    const { login } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
@@ -37,6 +40,7 @@ const Login: React.FC = () => {
             }
 
             console.log('Login successful:', data);
+            login(data.user); // Update auth context
             navigate('/');
         } catch (err: any) {
             setError(err.message);

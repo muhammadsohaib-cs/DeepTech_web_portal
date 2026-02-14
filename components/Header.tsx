@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X } from 'lucide-react';
-import { Link, useLocation } from 'react-router-dom';
+import { Menu, X, User, LogOut } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { NAV_LINKS } from '../constants';
 import Button from './Button';
+import { useAuth } from '../context/AuthContext';
 
 // Optional: Define the shape of your link objects if not already defined
 interface NavLink {
@@ -15,6 +16,8 @@ const Header: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
 
   // Handle Scroll Effect
   useEffect(() => {
@@ -31,6 +34,12 @@ const Header: React.FC = () => {
       document.body.style.overflow = 'unset';
     }
   }, [isOpen]);
+
+  const handleLogout = () => {
+    logout();
+    setIsOpen(false);
+    navigate('/');
+  };
 
   // Helper to render links (avoids code duplication)
   const renderNavLink = (link: NavLink, isMobile: boolean = false) => {
@@ -97,11 +106,36 @@ const Header: React.FC = () => {
           {/* DESKTOP NAVIGATION */}
           <div className="hidden lg:flex items-center space-x-4">
             {NAV_LINKS.map((link) => renderNavLink(link, false))}
-            <Link to="/login">
-              <Button size="sm" className="ml-4 bg-sky-500 hover:bg-sky-600 text-white font-bold px-6 py-2 rounded-full shadow-[0_0_15px_rgba(56,189,248,0.3)] transition-all hover:shadow-[0_0_25px_rgba(56,189,248,0.5)]">
-                Sign In
-              </Button>
-            </Link>
+
+            {user ? (
+              <div className="flex items-center gap-4 ml-4">
+                <Link to="/profile" className="flex items-center gap-2 group">
+                  <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-700 border border-white/20 group-hover:border-sky-500 transition-colors">
+                    {user.profileImage ? (
+                      <img src={user.profileImage} alt={user.name} className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <User className="w-4 h-4 text-white" />
+                      </div>
+                    )}
+                  </div>
+                  <span className="text-gray-300 text-sm group-hover:text-white transition-colors">{user.name}</span>
+                </Link>
+                <Button
+                  size="sm"
+                  onClick={handleLogout}
+                  className="bg-white/10 hover:bg-white/20 text-white border border-white/10 px-3 py-2 rounded-full flex items-center gap-2"
+                >
+                  <LogOut className="w-4 h-4" />
+                </Button>
+              </div>
+            ) : (
+              <Link to="/login">
+                <Button size="sm" className="ml-4 bg-sky-500 hover:bg-sky-600 text-white font-bold px-6 py-2 rounded-full shadow-[0_0_15px_rgba(56,189,248,0.3)] transition-all hover:shadow-[0_0_25px_rgba(56,189,248,0.5)]">
+                  Sign In
+                </Button>
+              </Link>
+            )}
           </div>
 
           {/* MOBILE MENU TOGGLE */}
@@ -125,16 +159,42 @@ const Header: React.FC = () => {
         <div className="flex flex-col h-full pt-24 px-6 pb-6 overflow-y-auto">
           <div className="flex flex-col space-y-2">
             {NAV_LINKS.map((link) => renderNavLink(link, true))}
-            <Link to="/login" onClick={() => setIsOpen(false)} className="mt-4">
-              <Button className="w-full bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 rounded-xl shadow-[0_0_15px_rgba(56,189,248,0.3)]">
-                Sign In
-              </Button>
-            </Link>
+
+            {user ? (
+              <div className="mt-8 pt-8 border-t border-white/10">
+                <Link to="/profile" className="flex items-center gap-3 mb-6" onClick={() => setIsOpen(false)}>
+                  <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-700 border border-white/20">
+                    {user.profileImage ? (
+                      <img src={user.profileImage} alt={user.name} className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <User className="w-6 h-6 text-white" />
+                      </div>
+                    )}
+                  </div>
+                  <span className="text-xl text-white font-semibold">{user.name}</span>
+                </Link>
+                <Button
+                  onClick={handleLogout}
+                  className="w-full bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 font-bold py-3 rounded-xl flex justify-center items-center gap-2"
+                >
+                  <LogOut className="w-5 h-5" />
+                  Logout
+                </Button>
+              </div>
+            ) : (
+              <Link to="/login" onClick={() => setIsOpen(false)} className="mt-4">
+                <Button className="w-full bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 rounded-xl shadow-[0_0_15px_rgba(56,189,248,0.3)]">
+                  Sign In
+                </Button>
+              </Link>
+            )}
           </div>
         </div>
       </div>
     </nav>
   );
 };
+
 
 export default Header;

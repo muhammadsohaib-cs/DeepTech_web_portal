@@ -11,7 +11,9 @@ import WhyAttend from './pages/WhyAttend';
 import Button from './components/Button';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
+import { AuthProvider } from './context/AuthContext';
 import Verification from './pages/Verification';
+import Profile from './pages/Profile';
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -48,16 +50,19 @@ const MainLayout = () => (
 const App: React.FC = () => {
   return (
     <Router>
-      <ScrollToTop />
-      <Routes>
-        {/* Auth Routes (Standalone) */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/verification" element={<Verification />} />
+      <AuthProvider>
+        <ScrollToTop />
+        <Routes>
+          {/* Auth Routes (Standalone) */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/verification" element={<Verification />} />
+          <Route path="/profile" element={<Profile />} />
 
-        {/* Main Site Routes */}
-        <Route path="/*" element={<MainLayout />} />
-      </Routes>
+          {/* Main Site Routes */}
+          <Route path="/*" element={<MainLayout />} />
+        </Routes>
+      </AuthProvider>
     </Router>
   );
 };
