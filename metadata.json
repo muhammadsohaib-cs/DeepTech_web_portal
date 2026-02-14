@@ -1,0 +1,8 @@
+{
+  "name": "Copy of DeepTech Summit 2026",
+  "description": "A high-end technology website for the DeepTech Summit 2026, focusing on bridging the gap between research and the multi-million dollar market in Pakistan.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
