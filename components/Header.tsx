@@ -170,6 +170,14 @@ const Header: React.FC = () => {
 
             {user ? (
               <div className="mt-8 pt-8 border-t border-white/10">
+                {user.isAdmin && (
+                  <Link to="/admin" onClick={() => setIsOpen(false)} className="block mb-4">
+                    <Button className="w-full bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 font-bold py-3 rounded-xl flex justify-center items-center gap-2">
+                      <ShieldAlert className="w-5 h-5" />
+                      Admin Dashboard
+                    </Button>
+                  </Link>
+                )}
                 <Link to="/profile" className="flex items-center gap-3 mb-6" onClick={() => setIsOpen(false)}>
                   <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-700 border border-white/20">
                     {user.profileImage ? (
