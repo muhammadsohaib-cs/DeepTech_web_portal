@@ -8,6 +8,7 @@ import { ResearchPaper } from '../types';
 
 const Research: React.FC = () => {
     const { user } = useAuth();
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
     const [papers, setPapers] = useState<ResearchPaper[]>([]);
     const [loading, setLoading] = useState(true);
     const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
@@ -35,7 +36,7 @@ const Research: React.FC = () => {
     const fetchPapers = async () => {
         try {
             setLoading(true);
-            let url = 'http://localhost:5000/api/research';
+            let url = `${API_URL}/api/research`;
             if (activeFilter === 'my-papers' && user) {
                 url += `?authorId=${user._id}`;
             }
@@ -55,7 +56,7 @@ const Research: React.FC = () => {
         try {
             setLoading(true);
             const queryParam = searchQuery ? `?query=${encodeURIComponent(searchQuery)}` : '';
-            const response = await fetch(`http://localhost:5000/api/research/external${queryParam}`);
+            const response = await fetch(`${API_URL}/api/research/external${queryParam}`);
             const data = await response.json();
 
             // OpenAlex returns a 'results' array
@@ -139,7 +140,7 @@ const Research: React.FC = () => {
         if (!user || !window.confirm("Are you sure you want to delete this research paper?")) return;
 
         try {
-            const response = await fetch(`http://localhost:5000/api/research/${paperId}`, {
+            const response = await fetch(`${API_URL}/api/research/${paperId}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json'
@@ -190,11 +191,11 @@ const Research: React.FC = () => {
         }
 
         try {
-            let url = 'http://localhost:5000/api/research/upload';
+            let url = `${API_URL}/api/research/upload`;
             let method = 'POST';
 
             if (editingPaper) {
-                url = `http://localhost:5000/api/research/${editingPaper._id}`;
+                url = `${API_URL}/api/research/${editingPaper._id}`;
                 method = 'PUT';
             }
 

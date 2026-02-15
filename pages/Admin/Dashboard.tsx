@@ -20,7 +20,8 @@ const AdminDash: React.FC = () => {
         const fetchStats = async () => {
             try {
                 // Fetch stats from backend
-                const response = await fetch('http://localhost:5000/api/admin/stats', {
+                const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+                const response = await fetch(`${API_URL}/api/admin/stats`, {
                     headers: { 'adminid': user?._id || '' }
                 });
                 if (response.ok) {

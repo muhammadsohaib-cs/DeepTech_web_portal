@@ -15,13 +15,14 @@ interface UserData {
 
 const AdminUsers: React.FC = () => {
     const { user } = useAuth();
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
     const [users, setUsers] = useState<UserData[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
 
     const fetchUsers = async () => {
         try {
-            const res = await fetch('http://localhost:5000/api/admin/users', {
+            const res = await fetch(`${API_URL}/api/admin/users`, {
                 headers: { 'adminid': user?._id || '' }
             });
             if (res.ok) {
@@ -43,7 +44,7 @@ const AdminUsers: React.FC = () => {
         if (!window.confirm(`Are you sure you want to ${currentStatus ? 'demote' : 'promote'} this user?`)) return;
 
         try {
-            const res = await fetch(`http://localhost:5000/api/admin/users/${userId}/role`, {
+            const res = await fetch(`${API_URL}/api/admin/users/${userId}/role`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -64,7 +65,7 @@ const AdminUsers: React.FC = () => {
         if (!window.confirm("Are you sure? This action cannot be undone.")) return;
 
         try {
-            const res = await fetch(`http://localhost:5000/api/admin/users/${userId}`, {
+            const res = await fetch(`${API_URL}/api/admin/users/${userId}`, {
                 method: 'DELETE',
                 headers: { 'adminid': user?._id || '' }
             });
