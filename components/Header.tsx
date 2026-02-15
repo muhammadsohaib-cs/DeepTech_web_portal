@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, User, LogOut } from 'lucide-react';
+import { Menu, X, User, LogOut, ShieldAlert } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { NAV_LINKS } from '../constants';
 import Button from './Button';
@@ -109,6 +109,14 @@ const Header: React.FC = () => {
 
             {user ? (
               <div className="flex items-center gap-4 ml-4">
+                {user.isAdmin && (
+                  <Link to="/admin">
+                    <Button size="sm" className="bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 px-3 py-2 rounded-full flex items-center gap-2">
+                      <ShieldAlert className="w-4 h-4" />
+                      <span className="hidden md:inline">Admin</span>
+                    </Button>
+                  </Link>
+                )}
                 <Link to="/profile" className="flex items-center gap-2 group">
                   <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-700 border border-white/20 group-hover:border-sky-500 transition-colors">
                     {user.profileImage ? (

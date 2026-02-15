@@ -82,7 +82,7 @@ const AdminDash: React.FC = () => {
             {/* Additional Dashboard Content like Charts could go here */}
             <div className="bg-zinc-900 border border-white/5 rounded-2xl p-8">
                 <h3 className="text-lg font-bold text-white mb-4">Quick Actions</h3>
-                <div className="flex gap-4">
+                <div className="flex flex-wrap gap-4">
                     <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors">
                         Refresh Stats
                     </button>

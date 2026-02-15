@@ -28,7 +28,7 @@ const Login: React.FC = () => {
 
         try {
             const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-const response = await fetch(`${API_URL}/api/auth/login`, {
+            const response = await fetch(`${API_URL}/api/auth/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password }),
@@ -40,9 +40,12 @@ const response = await fetch(`${API_URL}/api/auth/login`, {
                 throw new Error(data.message || 'Login failed');
             }
 
-            console.log('Login successful:', data);
             login(data.user); // Update auth context
-            navigate('/');
+            if (data.user.isAdmin) {
+                navigate('/admin');
+            } else {
+                navigate('/');
+            }
         } catch (err: any) {
             setError(err.message);
         } finally {
@@ -52,7 +55,7 @@ const response = await fetch(`${API_URL}/api/auth/login`, {
 
     const handleGoogleLogin = () => {
         // TODO: Implement Google OAuth
-        console.log('Continue with Google');
+
     };
 
     return (
