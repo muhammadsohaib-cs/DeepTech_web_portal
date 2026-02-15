@@ -5,6 +5,7 @@ interface User {
     name: string;
     email: string;
     profileImage?: string;
+    isAdmin?: boolean;
     // add other fields as necessary
 }
 

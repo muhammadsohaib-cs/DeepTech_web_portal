@@ -19,6 +19,40 @@ const client = new MongoClient(uri);
 
 let db;
 
+// Helper: Log Activity
+async function logActivity(action, userId, details = "") {
+    if (!db) return;
+    try {
+        const activity = {
+            action,
+            userId: userId ? new ObjectId(userId) : null,
+            details,
+            timestamp: new Date()
+        };
+        await db.collection("activities").insertOne(activity);
+    } catch (e) {
+        console.error("Activity Log Error:", e);
+    }
+}
+
+// Middleware: Verify Admin (Simple Check)
+const verifyAdmin = async (req, res, next) => {
+    const { adminid } = req.headers; // Expecting admin's User ID in header 'adminid'
+
+    if (!adminid) return res.status(401).json({ message: "Unauthorized: No Admin ID" });
+
+    try {
+        const user = await db.collection("users").findOne({ _id: new ObjectId(adminid) });
+        if (!user || !user.isAdmin) {
+            return res.status(403).json({ message: "Forbidden: Admins Only" });
+        }
+        req.adminUser = user;
+        next();
+    } catch (e) {
+        return res.status(500).json({ message: "Auth Error" });
+    }
+};
+
 const fs = require('fs');
 const path = require('path');
 const cloudinary = require('cloudinary').v2; // Keep for reference or remove if fully unused
@@ -97,7 +131,7 @@ app.get('/', (req, res) => {
 
 // --- ROUTES ---
 
-// 1. REGISTER (Now sends REAL email)
+// 1. REGISTER
 app.post('/api/auth/register', async (req, res) => {
     try {
         const { name, email, password } = req.body;
@@ -126,12 +160,14 @@ app.post('/api/auth/register', async (req, res) => {
             email,
             password: hashedPassword,
             verified: false,
+            isAdmin: false, // Default role
             verificationCode,
             createdAt: new Date()
         };
 
-        // Save User to DB
-        await usersCollection.insertOne(newUser);
+        const result = await usersCollection.insertOne(newUser);
+
+        logActivity("New User Registration", result.insertedId, `Email: ${email}`);
 
         // --- SEND REAL EMAIL ---
         const mailOptions = {
@@ -154,6 +190,7 @@ app.post('/api/auth/register', async (req, res) => {
             res.status(201).json({ message: "User registered. Verification code sent to your email.", email });
         } catch (emailError) {
             console.error("Error sending email:", emailError);
+            logActivity("Email Failed", result.insertedId, `Type: Verification, Error: ${emailError.message}`);
             // Optional: Delete the user if email fails so they can try again
             await usersCollection.deleteOne({ email });
             return res.status(500).json({ message: "Failed to send verification email. Please try again." });
@@ -185,6 +222,8 @@ app.post('/api/auth/verify', async (req, res) => {
 
         await usersCollection.updateOne({ email }, { $set: { verified: true, verificationCode: null } });
 
+        logActivity("User Verified", user._id, `Email: ${email}`);
+
         res.status(200).json({ message: "Account verified successfully" });
     } catch (error) {
         console.error("Verify Error:", error);
@@ -207,7 +246,12 @@ app.post('/api/auth/login', async (req, res) => {
         if (!user.verified) return res.status(400).json({ message: "Please verify your email first" });
 
         const isPasswordValid = await bcrypt.compare(password, user.password);
-        if (!isPasswordValid) return res.status(400).json({ message: "Invalid credentials" });
+        if (!isPasswordValid) {
+            logActivity("Failed Login Attempt", user._id, "Invalid Password");
+            return res.status(400).json({ message: "Invalid credentials" });
+        }
+
+        logActivity("User Login", user._id, "Success");
 
         const { password: _, verificationCode: __, ...userData } = user;
         res.status(200).json({ message: "Login successful", user: userData });
@@ -242,7 +286,10 @@ app.put('/api/user/update', upload.single('profileImage'), async (req, res) => {
         const updateData = {};
 
         // Update Name
-        if (name) updateData.name = name;
+        if (name && name !== user.name) {
+            updateData.name = name;
+            logActivity("Profile Updated", userObjectId, "Name changed");
+        }
 
         // Update Password
         if (newPassword) {
@@ -255,6 +302,7 @@ app.put('/api/user/update', upload.single('profileImage'), async (req, res) => {
             }
             const saltRounds = 10;
             updateData.password = await bcrypt.hash(newPassword, saltRounds);
+            logActivity("Password Changed", userObjectId, "Success");
         }
 
         // Update Profile Image
@@ -275,6 +323,7 @@ app.put('/api/user/update', upload.single('profileImage'), async (req, res) => {
                 const result = await uploadPromise;
                 console.log("File uploaded to Cloudinary:", result.secure_url);
                 updateData.profileImage = result.secure_url;
+                logActivity("Profile Image Updated", userObjectId, "Uploaded to Cloudinary");
             } catch (uploadError) {
                 console.error("Cloudinary Upload Error Detailed:", uploadError);
                 return res.status(500).json({ message: "Image upload failed: " + uploadError.message });
@@ -317,7 +366,6 @@ app.get('/api/research', async (req, res) => {
 });
 
 // 6. UPLOAD RESEARCH PAPER
-// 6. UPLOAD RESEARCH PAPER
 app.post('/api/research/upload', upload.single('paper'), async (req, res) => {
     try {
         if (!db) return res.status(500).json({ message: "Database not connected" });
@@ -337,17 +385,21 @@ app.post('/api/research/upload', upload.single('paper'), async (req, res) => {
         // Construct URL: http://localhost:5000/uploads/filename
         const fileUrl = `${protocol}://${host}/uploads/${file.filename}`;
 
+        const finalAuthorId = userId || authorId || "unknown";
+
         const newPaper = {
             title,
             abstract,
             tags: tags ? tags.split(',').map(tag => tag.trim()) : [],
-            authorId: userId || authorId || "unknown",
+            authorId: finalAuthorId,
             authorName: authorName || "Anonymous",
             fileUrl: fileUrl,
             createdAt: new Date()
         };
 
         const result = await db.collection("research_papers").insertOne(newPaper);
+
+        logActivity("Paper Uploaded", finalAuthorId, `Title: ${title}`);
 
         res.status(201).json({ message: "Paper uploaded successfully", paperId: result.insertedId, paper: newPaper });
 
@@ -357,7 +409,6 @@ app.post('/api/research/upload', upload.single('paper'), async (req, res) => {
     }
 });
 
-// 7. GET EXTERNAL RESEARCH (Proxy)
 // 7. GET EXTERNAL RESEARCH (Proxy)
 app.get('/api/research/external', (req, res) => {
     const { query } = req.query;
@@ -380,7 +431,6 @@ app.get('/api/research/external', (req, res) => {
     });
 });
 
-// 8. DELETE RESEARCH PAPER
 // 8. DELETE RESEARCH PAPER
 app.delete('/api/research/:id', async (req, res) => {
     try {
@@ -417,6 +467,8 @@ app.delete('/api/research/:id', async (req, res) => {
         }
 
         await papersCollection.deleteOne({ _id: paperObjectId });
+
+        logActivity("Paper Deleted", userId, `Deleted paper: ${paper.title}`);
         res.status(200).json({ message: "Paper deleted successfully" });
 
     } catch (error) {
@@ -425,7 +477,6 @@ app.delete('/api/research/:id', async (req, res) => {
     }
 });
 
-// 9. UPDATE RESEARCH PAPER
 // 9. UPDATE RESEARCH PAPER
 app.put('/api/research/:id', upload.single('paper'), async (req, res) => {
     try {
@@ -478,10 +529,102 @@ app.put('/api/research/:id', upload.single('paper'), async (req, res) => {
         }
 
         await papersCollection.updateOne({ _id: paperObjectId }, { $set: updateData });
+
+        logActivity("Paper Updated", userId, `Updated paper: ${title}`);
         res.status(200).json({ message: "Paper updated successfully", fileUrl: updateData.fileUrl });
 
     } catch (error) {
         console.error("Update Paper Error:", error);
+
         res.status(500).json({ message: "Error updating paper" });
+    }
+});
+
+// --- ADMIN ROUTES ---
+
+// 10. GET SYSTEM OVERVIEW (Stats)
+app.get('/api/admin/stats', verifyAdmin, async (req, res) => {
+    if (!db) return res.status(500).json({ message: "Database not connected" });
+    try {
+        const usersCount = await db.collection("users").countDocuments();
+        const papersCount = await db.collection("research_papers").countDocuments();
+        const verifiedUsers = await db.collection("users").countDocuments({ verified: true });
+
+        res.status(200).json({
+            totalUsers: usersCount,
+            totalPapers: papersCount,
+            verifiedUsers,
+            serverTime: new Date()
+        });
+    } catch (error) {
+        console.error("Stats Error:", error);
+        res.status(500).json({ message: "Error fetching stats" });
+    }
+});
+
+// 11. GET ALL USERS
+app.get('/api/admin/users', verifyAdmin, async (req, res) => {
+    try {
+        const users = await db.collection("users").find().sort({ createdAt: -1 }).toArray();
+        // Remove sensitive info
+        const safeUsers = users.map(({ password, verificationCode, ...user }) => user);
+        res.status(200).json(safeUsers);
+    } catch (error) {
+        res.status(500).json({ message: "Error fetching users" });
+    }
+});
+
+// 12. UPDATE USER ROLE (Promote/Demote)
+app.put('/api/admin/users/:id/role', verifyAdmin, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { isAdmin } = req.body;
+
+        await db.collection("users").updateOne(
+            { _id: new ObjectId(id) },
+            { $set: { isAdmin: !!isAdmin } }
+        );
+
+        logActivity("Admin Action: Changed Role", req.adminUser._id, `Updated user ${id} to isAdmin: ${isAdmin}`);
+        res.status(200).json({ message: "User role updated" });
+    } catch (error) {
+        res.status(500).json({ message: "Error updating role" });
+    }
+});
+
+// 13. DELETE USER
+app.delete('/api/admin/users/:id', verifyAdmin, async (req, res) => {
+    try {
+        const { id } = req.params;
+        await db.collection("users").deleteOne({ _id: new ObjectId(id) });
+
+        logActivity("Admin Action: Deleted User", req.adminUser._id, `Deleted user ${id}`);
+        res.status(200).json({ message: "User deleted" });
+    } catch (error) {
+        res.status(500).json({ message: "Error deleting user" });
+    }
+});
+
+// 14. GET ACTIVITY LOGS
+app.get('/api/admin/activity', verifyAdmin, async (req, res) => {
+    try {
+        const activities = await db.collection("activities")
+            .find()
+            .sort({ timestamp: -1 })
+            .limit(50)
+            .toArray();
+
+        // Enrich with user names if possible (manual join)
+        const enrichedActivities = await Promise.all(activities.map(async (act) => {
+            if (act.userId) {
+                const u = await db.collection("users").findOne({ _id: act.userId });
+                return { ...act, userName: u ? u.name : "Unknown User" };
+            }
+            return { ...act, userName: "System" };
+        }));
+
+        res.status(200).json(enrichedActivities);
+    } catch (error) {
+        res.status(500).json({ message: "Error fetching activities" });
     }
 });

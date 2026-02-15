@@ -15,6 +15,10 @@ import { AuthProvider } from './context/AuthContext';
 import Verification from './pages/Verification';
 import Profile from './pages/Profile';
 import Research from './pages/Research';
+import AdminLayout from './pages/Admin/AdminLayout';
+import AdminDash from './pages/Admin/Dashboard';
+import AdminUsers from './pages/Admin/Users';
+import AdminActivity from './pages/Admin/Activity';
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -60,6 +64,13 @@ const App: React.FC = () => {
           <Route path="/signup" element={<Signup />} />
           <Route path="/verification" element={<Verification />} />
           <Route path="/profile" element={<Profile />} />
+
+          {/* Admin Routes */}
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<AdminDash />} />
+            <Route path="users" element={<AdminUsers />} />
+            <Route path="activity" element={<AdminActivity />} />
+          </Route>
 
           {/* Main Site Routes */}
           <Route path="/*" element={<MainLayout />} />
