@@ -5,7 +5,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import Button from '../components/Button';
 import { useAuth } from '../context/AuthContext';
 // ... (imports remain)
-import { TechCore } from '../components/AnimatedTech'; // Reusing animation for cohesion
 
 const fadeInUp = {
     hidden: { opacity: 0, y: 20 },
@@ -77,9 +76,6 @@ const Login: React.FC = () => {
                     variants={fadeInUp}
                 >
                     <div className="relative w-full aspect-square max-w-md mx-auto">
-                        <div className="absolute inset-0 scale-150 opacity-20">
-                            <TechCore />
-                        </div>
                         <div className="relative z-10 flex flex-col items-center justify-center h-full text-center space-y-4">
                             <h1 className="font-display font-extrabold text-5xl tracking-tighter text-white">
                                 WELCOME <br />
@@ -94,27 +90,28 @@ const Login: React.FC = () => {
 
                 {/* Right Column: Form */}
                 <motion.div
-                    className="w-full max-w-md mx-auto bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-2xl relative"
+                    className="w-full max-w-md mx-auto bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl p-8 shadow-2xl relative hover:shadow-[0_0_40px_rgba(56,189,248,0.1)] hover:border-white/20 transition-all duration-300"
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.6, delay: 0.2 }}
                 >
                     <div className="mb-8 text-center lg:text-left">
-                        <h2 className="text-3xl font-display font-bold text-white mb-2">Sign In</h2>
+                        <h2 className="text-3xl font-display font-bold text-white mb-2 tracking-tight">Sign In</h2>
                         <p className="text-gray-400 text-sm">Access your dashboard and community.</p>
                     </div>
 
                     {error && (
-                        <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-500 text-sm">
+                        <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-500 text-sm flex items-center gap-2">
+                            <span className="w-1.5 h-1.5 rounded-full bg-red-500"></span>
                             {error}
                         </div>
                     )}
 
-                    <form onSubmit={handleSubmit} className="space-y-5">
+                    <form onSubmit={handleSubmit} className="space-y-6">
                         {/* Email Input */}
-                        <div className="space-y-2">
-                            <label className="text-xs font-medium text-gray-400 uppercase tracking-wider ml-1">Email Address</label>
-                            <div className="relative group">
+                        <div className="space-y-2 group">
+                            <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider ml-1 group-focus-within:text-sky-400 transition-colors">Email Address</label>
+                            <div className="relative transform transition-all duration-200 group-focus-within:scale-[1.01]">
                                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                                     <Mail className="h-5 w-5 text-gray-500 group-focus-within:text-sky-400 transition-colors" />
                                 </div>
@@ -122,7 +119,7 @@ const Login: React.FC = () => {
                                     type="email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    className="w-full bg-black/40 border border-white/10 text-white rounded-xl py-3.5 pl-12 pr-4 focus:outline-none focus:border-sky-500/50 focus:ring-1 focus:ring-sky-500/50 transition-all placeholder-gray-600/50"
+                                    className="w-full bg-black/40 border border-white/10 text-white rounded-xl py-3.5 pl-12 pr-4 focus:outline-none focus:border-sky-500/50 focus:ring-1 focus:ring-sky-500/50 transition-all placeholder-gray-600/50 hover:bg-black/50 hover:border-white/20"
                                     placeholder="name@example.com"
                                     required
                                 />
@@ -130,12 +127,12 @@ const Login: React.FC = () => {
                         </div>
 
                         {/* Password Input */}
-                        <div className="space-y-2">
+                        <div className="space-y-2 group">
                             <div className="flex justify-between items-center ml-1">
-                                <label className="text-xs font-medium text-gray-400 uppercase tracking-wider">Password</label>
-                                <Link to="/forgot-password" className="text-xs text-sky-400 hover:text-sky-300 transition-colors">Forgot?</Link>
+                                <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider group-focus-within:text-sky-400 transition-colors">Password</label>
+                                <Link to="/forgot-password" className="text-xs text-sky-400 hover:text-sky-300 transition-colors font-medium hover:underline decoration-sky-400/30 underline-offset-4">Forgot?</Link>
                             </div>
-                            <div className="relative group">
+                            <div className="relative transform transition-all duration-200 group-focus-within:scale-[1.01]">
                                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                                     <Lock className="h-5 w-5 text-gray-500 group-focus-within:text-sky-400 transition-colors" />
                                 </div>
@@ -143,7 +140,7 @@ const Login: React.FC = () => {
                                     type={showPassword ? "text" : "password"}
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    className="w-full bg-black/40 border border-white/10 text-white rounded-xl py-3.5 pl-12 pr-12 focus:outline-none focus:border-sky-500/50 focus:ring-1 focus:ring-sky-500/50 transition-all placeholder-gray-600/50"
+                                    className="w-full bg-black/40 border border-white/10 text-white rounded-xl py-3.5 pl-12 pr-12 focus:outline-none focus:border-sky-500/50 focus:ring-1 focus:ring-sky-500/50 transition-all placeholder-gray-600/50 hover:bg-black/50 hover:border-white/20"
                                     placeholder="••••••••"
                                     required
                                 />
@@ -160,7 +157,7 @@ const Login: React.FC = () => {
                         {/* Submit Button */}
                         <Button
                             type="submit"
-                            className="w-full py-4 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-bold rounded-xl shadow-[0_0_20px_rgba(56,189,248,0.3)] hover:shadow-[0_0_35px_rgba(56,189,248,0.5)] transition-all transform active:scale-[0.98]"
+                            className="w-full py-4 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-bold rounded-xl shadow-[0_0_20px_rgba(56,189,248,0.3)] hover:shadow-[0_0_35px_rgba(56,189,248,0.5)] transition-all transform active:scale-[0.98] hover:scale-[1.02] duration-200"
                             disabled={loading}
                         >
                             {loading ? 'Signing In...' : 'Sign In'}
@@ -180,7 +177,7 @@ const Login: React.FC = () => {
                     {/* Google Button */}
                     <button
                         onClick={handleGoogleLogin}
-                        className="w-full flex items-center justify-center gap-3 bg-white text-black font-semibold py-3.5 rounded-xl hover:bg-gray-100 transition-colors active:scale-[0.98]"
+                        className="w-full flex items-center justify-center gap-3 bg-white text-black font-semibold py-3.5 rounded-xl hover:bg-gray-200 transition-all active:scale-[0.98] hover:shadow-[0_0_20px_rgba(255,255,255,0.2)]"
                     >
                         <svg className="w-5 h-5" viewBox="0 0 24 24">
                             <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />

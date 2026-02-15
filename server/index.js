@@ -61,10 +61,25 @@ const multer = require('multer');
 
 // --- EMAIL CONFIGURATION ---
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true, // Use SSL
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
+    },
+    tls: {
+        // Do not fail on invalid certs
+        rejectUnauthorized: false
+    }
+});
+
+// Verify connection configuration
+transporter.verify(function (error, success) {
+    if (error) {
+        console.error("Transporter Error:", error);
+    } else {
+        console.log("Server is ready to take our messages");
     }
 });
 
@@ -120,6 +135,10 @@ async function startServer() {
         console.error("CRITICAL ERROR: Could not connect to MongoDB.", error);
         process.exit(1);
     }
+}
+
+if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+    console.warn("WARNING: EMAIL_USER or EMAIL_PASS environment variables are missing! Email functionality will not work.");
 }
 
 startServer();
@@ -189,11 +208,16 @@ app.post('/api/auth/register', async (req, res) => {
             console.log(`Email sent successfully to ${email}`);
             res.status(201).json({ message: "User registered. Verification code sent to your email.", email });
         } catch (emailError) {
-            console.error("Error sending email:", emailError);
+            console.error("Email Sending Failed:", emailError);
+            console.error("Please verify that your Gmail App Password is correct and 2FA is enabled.");
             logActivity("Email Failed", result.insertedId, `Type: Verification, Error: ${emailError.message}`);
-            // Optional: Delete the user if email fails so they can try again
+
+            // Delete the user
             await usersCollection.deleteOne({ email });
-            return res.status(500).json({ message: "Failed to send verification email. Please try again." });
+
+            return res.status(500).json({
+                message: "Failed to send verification email. " + (emailError.message || "Please check server logs.")
+            });
         }
 
     } catch (error) {
