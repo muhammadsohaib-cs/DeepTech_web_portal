@@ -14,6 +14,7 @@ import Signup from './pages/Signup';
 import { AuthProvider } from './context/AuthContext';
 import Verification from './pages/Verification';
 import Profile from './pages/Profile';
+import Research from './pages/Research';
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -33,6 +34,7 @@ const MainLayout = () => (
         <Route path="/summit-2026" element={<Summit />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/why-attend" element={<WhyAttend />} />
+        <Route path="/research" element={<Research />} />
       </Routes>
     </main>
     <div className="py-20 bg-primary/5 text-center border-t border-primary/10">
@@ -61,6 +63,8 @@ const App: React.FC = () => {
 
           {/* Main Site Routes */}
           <Route path="/*" element={<MainLayout />} />
+
+
         </Routes>
       </AuthProvider>
     </Router>

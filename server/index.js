@@ -19,33 +19,52 @@ const client = new MongoClient(uri);
 
 let db;
 
-const cloudinary = require('cloudinary').v2;
+const fs = require('fs');
+const path = require('path');
+const cloudinary = require('cloudinary').v2; // Keep for reference or remove if fully unused
 const multer = require('multer');
-const streamifier = require('streamifier');
+// const streamifier = require('streamifier'); // Not needed for disk storage
 
 // --- EMAIL CONFIGURATION ---
 const transporter = nodemailer.createTransport({
-    service: 'gmail', // You can change this to 'outlook', 'yahoo', etc.
+    service: 'gmail',
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
     }
 });
 
-// --- CLOUDINARY CONFIGURATION ---
-console.log("--- Cloudinary Config Debug ---");
-console.log("Cloud Name:", process.env.CLOUDINARY_CLOUD_NAME);
-console.log("API Key Length:", process.env.CLOUDINARY_API_KEY ? process.env.CLOUDINARY_API_KEY.length : "Missing");
-console.log("-------------------------------");
+// --- FILE UPLOAD STORAGE (LOCAL) ---
+const uploadDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir);
+}
 
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'uploads/')
+    },
+    filename: function (req, file, cb) {
+        // Sanitize filename and append timestamp for uniqueness
+        const name = file.originalname.replace(/[^a-zA-Z0-9.]/g, "_");
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, uniqueSuffix + '-' + name);
+    }
+});
+
+const upload = multer({ storage: storage });
+
+// Serve uploads directory
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// --- CLOUDINARY CONFIGURATION (DISABLED/UNUSED) ---
+/*
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
     api_key: process.env.CLOUDINARY_API_KEY,
     api_secret: process.env.CLOUDINARY_API_SECRET
 });
-
-// Multer setup for memory storage
-const upload = multer({ storage: multer.memoryStorage() });
+*/
 
 // Helper function to generate 6-digit code
 const generateCode = () => Math.floor(100000 + Math.random() * 900000).toString();
@@ -277,5 +296,192 @@ app.put('/api/user/update', upload.single('profileImage'), async (req, res) => {
     } catch (error) {
         console.error("Update Profile Error:", error);
         res.status(500).json({ message: "Error updating profile" });
+    }
+});
+
+// 5. GET RESEARCH PAPERS
+app.get('/api/research', async (req, res) => {
+    try {
+        const { authorId } = req.query;
+        if (!db) return res.status(500).json({ message: "Database not connected" });
+
+        const query = {};
+        if (authorId) query.authorId = authorId;
+
+        const papers = await db.collection("research_papers").find(query).sort({ createdAt: -1 }).toArray();
+        res.status(200).json(papers);
+    } catch (error) {
+        console.error("Error fetching papers:", error);
+        res.status(500).json({ message: "Error fetching papers" });
+    }
+});
+
+// 6. UPLOAD RESEARCH PAPER
+// 6. UPLOAD RESEARCH PAPER
+app.post('/api/research/upload', upload.single('paper'), async (req, res) => {
+    try {
+        if (!db) return res.status(500).json({ message: "Database not connected" });
+
+        const { title, abstract, tags, authorId, authorName, userId } = req.body;
+        const file = req.file;
+
+        if (!title || !abstract || !file) {
+            return res.status(400).json({ message: "Title, abstract, and file are required" });
+        }
+
+        console.log("Uploading paper (Local):", file.originalname, "->", file.filename);
+
+        // Generate Local URL
+        const protocol = req.protocol;
+        const host = req.get('host');
+        // Construct URL: http://localhost:5000/uploads/filename
+        const fileUrl = `${protocol}://${host}/uploads/${file.filename}`;
+
+        const newPaper = {
+            title,
+            abstract,
+            tags: tags ? tags.split(',').map(tag => tag.trim()) : [],
+            authorId: userId || authorId || "unknown",
+            authorName: authorName || "Anonymous",
+            fileUrl: fileUrl,
+            createdAt: new Date()
+        };
+
+        const result = await db.collection("research_papers").insertOne(newPaper);
+
+        res.status(201).json({ message: "Paper uploaded successfully", paperId: result.insertedId, paper: newPaper });
+
+    } catch (error) {
+        console.error("Upload Error:", error);
+        res.status(500).json({ message: "Error uploading paper: " + error.message });
+    }
+});
+
+// 7. GET EXTERNAL RESEARCH (Proxy)
+// 7. GET EXTERNAL RESEARCH (Proxy)
+app.get('/api/research/external', (req, res) => {
+    const { query } = req.query;
+    const https = require('https');
+
+    // OpenAlex API: Broader, global coverage (Google Scholar-like)
+    // If query exists, search for it. If not, default to "Deep Tech" topics.
+    const searchQuery = query
+        ? encodeURIComponent(query)
+        : 'artificial+intelligence+OR+biotechnology+OR+quantum+computing+OR+robotics';
+
+    const url = `https://api.openalex.org/works?search=${searchQuery}&per_page=20&sort=publication_date:desc`;
+
+    https.get(url, (externalRes) => {
+        res.set('Content-Type', 'application/json');
+        externalRes.pipe(res);
+    }).on('error', (e) => {
+        console.error("External API Error:", e);
+        res.status(500).json({ message: "Error fetching external papers" });
+    });
+});
+
+// 8. DELETE RESEARCH PAPER
+// 8. DELETE RESEARCH PAPER
+app.delete('/api/research/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { userId } = req.body; // Expecting userId for ownership check (simplified)
+
+        if (!db) return res.status(500).json({ message: "Database not connected" });
+        if (!userId) return res.status(401).json({ message: "Unauthorized" });
+
+        const papersCollection = db.collection("research_papers");
+        let paperObjectId;
+        try {
+            paperObjectId = new ObjectId(id);
+        } catch (e) {
+            return res.status(400).json({ message: "Invalid Paper ID" });
+        }
+
+        const paper = await papersCollection.findOne({ _id: paperObjectId });
+        if (!paper) return res.status(404).json({ message: "Paper not found" });
+
+        if (paper.authorId !== userId) {
+            return res.status(403).json({ message: "You can only delete your own papers" });
+        }
+
+        // Delete local file if exists
+        if (paper.fileUrl && paper.fileUrl.includes('/uploads/')) {
+            const filename = paper.fileUrl.split('/').pop();
+            const filePath = path.join(__dirname, 'uploads', filename);
+            if (fs.existsSync(filePath)) {
+                fs.unlink(filePath, (err) => {
+                    if (err) console.error("Failed to delete local file:", err);
+                });
+            }
+        }
+
+        await papersCollection.deleteOne({ _id: paperObjectId });
+        res.status(200).json({ message: "Paper deleted successfully" });
+
+    } catch (error) {
+        console.error("Delete Paper Error:", error);
+        res.status(500).json({ message: "Error deleting paper" });
+    }
+});
+
+// 9. UPDATE RESEARCH PAPER
+// 9. UPDATE RESEARCH PAPER
+app.put('/api/research/:id', upload.single('paper'), async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { title, abstract, tags, userId } = req.body;
+        const file = req.file;
+
+        if (!db) return res.status(500).json({ message: "Database not connected" });
+        if (!userId) return res.status(401).json({ message: "Unauthorized" });
+
+        const papersCollection = db.collection("research_papers");
+        let paperObjectId;
+        try {
+            paperObjectId = new ObjectId(id);
+        } catch (e) {
+            return res.status(400).json({ message: "Invalid Paper ID" });
+        }
+
+        const paper = await papersCollection.findOne({ _id: paperObjectId });
+        if (!paper) return res.status(404).json({ message: "Paper not found" });
+
+        if (paper.authorId !== userId) {
+            return res.status(403).json({ message: "You can only edit your own papers" });
+        }
+
+        const updateData = {
+            title,
+            abstract,
+            tags: tags ? tags.split(',').map(tag => tag.trim()) : [],
+            updatedAt: new Date()
+        };
+
+        if (file) {
+            // Updated with new Local File
+            const protocol = req.protocol;
+            const host = req.get('host');
+            const fileUrl = `${protocol}://${host}/uploads/${file.filename}`;
+            updateData.fileUrl = fileUrl;
+
+            // Delete old local file if exists
+            if (paper.fileUrl && paper.fileUrl.includes('/uploads/')) {
+                const oldFilename = paper.fileUrl.split('/').pop();
+                const oldFilePath = path.join(__dirname, 'uploads', oldFilename);
+                if (fs.existsSync(oldFilePath)) {
+                    fs.unlink(oldFilePath, (err) => {
+                        if (err) console.error("Failed to delete old file:", err);
+                    });
+                }
+            }
+        }
+
+        await papersCollection.updateOne({ _id: paperObjectId }, { $set: updateData });
+        res.status(200).json({ message: "Paper updated successfully", fileUrl: updateData.fileUrl });
+
+    } catch (error) {
+        console.error("Update Paper Error:", error);
+        res.status(500).json({ message: "Error updating paper" });
     }
 });

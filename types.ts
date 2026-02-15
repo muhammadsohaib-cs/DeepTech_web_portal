@@ -32,3 +32,16 @@ export interface BlogPost {
   category: string;
   image: string;
 }
+
+export interface ResearchPaper {
+  _id: string;
+  title: string;
+  abstract: string;
+  authorName: string;
+  authorId: string;
+  authorEmail?: string;
+  fileUrl?: string;
+  tags: string[];
+  createdAt: string; // ISO date string
+  isExternal?: boolean; // Optional flag for external API papers
+}

@@ -6,6 +6,7 @@ import { BlogPost } from './types';
 export const NAV_LINKS = [
   { name: 'Home', href: '/', external: false },
   { name: 'About', href: '/about', external: false },
+  { name: 'Research', href: '/research', external: false },
   { name: 'Community', href: 'https://chat.whatsapp.com/dummy-link', external: true },
   { name: 'Contact', href: '/contact', external: false },
 ];
