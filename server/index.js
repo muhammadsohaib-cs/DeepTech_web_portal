@@ -3,11 +3,11 @@ const express = require('express');
 const { MongoClient, ObjectId } = require('mongodb');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
-const nodemailer = require('nodemailer');
 const fs = require('fs');
 const path = require('path');
-const cloudinary = require('cloudinary').v2; // Keep for reference
+const cloudinary = require('cloudinary').v2;
 const multer = require('multer');
+const { Resend } = require('resend'); // IMPORT RESEND
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -19,6 +19,9 @@ app.use(express.json());
 const uri = process.env.MONGODB_URI;
 const client = new MongoClient(uri);
 let db;
+
+// --- INITIALIZE RESEND ---
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 // --- HELPER: LOG ACTIVITY ---
 async function logActivity(action, userId, details = "") {
@@ -52,35 +55,6 @@ const verifyAdmin = async (req, res, next) => {
         return res.status(500).json({ message: "Auth Error" });
     }
 };
-
-// --- EMAIL CONFIGURATION (FIXED FOR CLOUD) ---
-// --- EMAIL CONFIGURATION (FIXED) ---
-const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 587, // Must use 587, not 465
-    secure: false, // Must be false for port 587
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-    },
-    tls: {
-        rejectUnauthorized: false
-    },
-    // CRITICAL FIX: Force IPv4 (Fixes ENETUNREACH error)
-    family: 4, 
-    // Timeouts
-    connectionTimeout: 10000, 
-    greetingTimeout: 10000 
-});
-
-// Verify Email Connection on Startup
-transporter.verify(function (error, success) {
-    if (error) {
-        console.error("❌ Email System Error:", error);
-    } else {
-        console.log("✅ Email System Ready");
-    }
-});
 
 // --- FILE UPLOAD STORAGE (LOCAL) ---
 const uploadDir = path.join(__dirname, 'uploads');
@@ -125,8 +99,8 @@ async function startServer() {
     }
 }
 
-if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-    console.warn("⚠️  WARNING: Email credentials missing in .env");
+if (!process.env.RESEND_API_KEY) {
+    console.warn("⚠️  WARNING: RESEND_API_KEY is missing in .env");
 }
 
 startServer();
@@ -138,7 +112,7 @@ app.get('/', (req, res) => {
 
 // --- ROUTES ---
 
-// 1. REGISTER (With Robust Email)
+// 1. REGISTER (USING RESEND)
 app.post('/api/auth/register', async (req, res) => {
     try {
         const { name, email, password } = req.body;
@@ -167,27 +141,37 @@ app.post('/api/auth/register', async (req, res) => {
         const result = await usersCollection.insertOne(newUser);
         logActivity("New User Registration", result.insertedId, `Email: ${email}`);
 
-        // Send Email
-        const mailOptions = {
-            from: `"DeepTech Summit" <${process.env.EMAIL_USER}>`,
-            to: email,
-            subject: 'Verify your Account - DeepTech Summit',
-            html: `
-                <div style="font-family: Arial, sans-serif; padding: 20px;">
-                    <h2>Welcome to DeepTech Summit!</h2>
-                    <p>Your verification code is:</p>
-                    <h1 style="color: #0E4FAF; letter-spacing: 5px;">${verificationCode}</h1>
-                    <p>Expires in 15 minutes.</p>
-                </div>
-            `
-        };
-
+        // --- SEND EMAIL VIA RESEND ---
         try {
-            await transporter.sendMail(mailOptions);
-            console.log(`✅ Email sent to ${email}`);
-            res.status(201).json({ message: "User registered. Code sent.", email });
+            console.log(`Sending email via Resend to ${email}...`);
+            
+            // IMPORTANT: If you haven't verified your domain in Resend yet, 
+            // you MUST use 'onboarding@resend.dev' as the "from" address for testing.
+            const { data, error } = await resend.emails.send({
+                from: 'DeepTech <muhammadsohaib.19477@gmail.com>',
+                to: email,
+                subject: 'Verify your Account - DeepTech Summit',
+                html: `
+                    <div style="font-family: Arial, sans-serif; padding: 20px;">
+                        <h2>Welcome to DeepTech Summit!</h2>
+                        <p>Your verification code is:</p>
+                        <h1 style="color: #0E4FAF; letter-spacing: 5px;">${verificationCode}</h1>
+                        <p>This code will expire in 15 minutes.</p>
+                    </div>
+                `
+            });
+
+            if (error) {
+                console.error("❌ Resend API Error:", error);
+                await usersCollection.deleteOne({ email }); // Rollback user
+                return res.status(500).json({ message: "Failed to send email", error: error.message });
+            }
+
+            console.log(`✅ Email sent successfully! Resend ID: ${data.id}`);
+            res.status(201).json({ message: "User registered. Verification code sent.", email });
+
         } catch (emailError) {
-            console.error("❌ Email Failed:", emailError);
+            console.error("❌ Unexpected Email Error:", emailError);
             logActivity("Email Failed", result.insertedId, emailError.message);
             
             // ROLLBACK: Delete user if email fails
@@ -359,7 +343,7 @@ app.post('/api/research/upload', upload.single('paper'), async (req, res) => {
     }
 });
 
-// 7. EXTERNAL RESEARCH (FIXED: User-Agent Added)
+// 7. EXTERNAL RESEARCH 
 app.get('/api/research/external', (req, res) => {
     const { query } = req.query;
     const https = require('https');
@@ -370,10 +354,9 @@ app.get('/api/research/external', (req, res) => {
 
     const url = `https://api.openalex.org/works?search=${searchQuery}&per_page=20&sort=publication_date:desc`;
 
-    // REQUIRED: User-Agent header to prevent 403 Forbidden on Cloud Servers
     const options = {
         headers: {
-            'User-Agent': `DeepTechPortal/1.0 (mailto:${process.env.EMAIL_USER || 'admin@example.com'})`
+            'User-Agent': `DeepTechPortal/1.0 (mailto:admin@globaldeeptech.org)`
         }
     };
 
