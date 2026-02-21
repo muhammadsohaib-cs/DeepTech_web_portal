@@ -148,12 +148,12 @@ app.post('/api/auth/register', async (req, res) => {
             // IMPORTANT: If you haven't verified your domain in Resend yet, 
             // you MUST use 'onboarding@resend.dev' as the "from" address for testing.
             const { data, error } = await resend.emails.send({
-                from: 'DeepTech <muhammadsohaib.19477@gmail.com>',
+                from: 'DeepTech <noreply@globaldeeptech.org>',
                 to: email,
-                subject: 'Verify your Account - DeepTech Summit',
+                subject: 'Verify your Account - DeepTech',
                 html: `
                     <div style="font-family: Arial, sans-serif; padding: 20px;">
-                        <h2>Welcome to DeepTech Summit!</h2>
+                        <h2>Welcome to DeepTech !</h2>
                         <p>Your verification code is:</p>
                         <h1 style="color: #0E4FAF; letter-spacing: 5px;">${verificationCode}</h1>
                         <p>This code will expire in 15 minutes.</p>
