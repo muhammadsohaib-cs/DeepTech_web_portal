@@ -282,6 +282,72 @@ const Home: React.FC = () => {
         </div>
       </motion.section>
 
+      {/* 🔹 ECOSYSTEM ARCHITECTURE SECTION */}
+      <motion.section
+        className="py-24 bg-black relative overflow-hidden border-b border-white/5"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={staggerContainer}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="text-center space-y-6 mb-16">
+            <motion.p variants={fadeInUp} className="text-[10px] font-semibold tracking-[0.3em] text-sky-400 uppercase">
+              The Protocol
+            </motion.p>
+            <motion.h2 variants={fadeInUp} className="font-display font-extrabold text-3xl md:text-5xl tracking-tighter text-white">
+              ECOSYSTEM <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-blue-500 to-purple-600">ARCHITECTURE</span>
+            </motion.h2>
+            <motion.p variants={fadeInUp} className="text-blue-100/60 max-w-2xl mx-auto text-base font-light tracking-wide">
+              We operate at the convergence of three critical domains, transforming theoretical science into dominant market forces.
+            </motion.p>
+          </div>
+
+          <motion.div variants={staggerContainer} className="grid md:grid-cols-3 gap-8">
+            {[
+              {
+                title: "Academic Excellence",
+                desc: "Sourcing breakthrough IP from top-tier research institutions and scientific laboratories.",
+                img: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=800",
+                icon: <Atom className="w-6 h-6 text-sky-400" />
+              },
+              {
+                title: "Industrial Execution",
+                desc: "Applying hardcore engineering and operational supremacy to scale deep-tech ventures globally.",
+                img: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=800",
+                icon: <Cpu className="w-6 h-6 text-purple-400" />
+              },
+              {
+                title: "Institutional Capital",
+                desc: "Deploying strategic venture funding to ensure continuous momentum and market dominance.",
+                img: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=800",
+                icon: <Rocket className="w-6 h-6 text-emerald-400" />
+              }
+            ].map((pillar, i) => (
+              <motion.div variants={fadeInUp} key={i} className="group relative rounded-[2rem] overflow-hidden border border-white/10 bg-zinc-900/50 hover:border-white/30 transition-all duration-500 aspect-[4/5]">
+                <img src={pillar.img} alt={pillar.title} className="absolute inset-0 w-full h-full object-cover filter grayscale-[0.8] contrast-125 opacity-40 group-hover:grayscale-0 group-hover:opacity-60 group-hover:scale-110 transition-all duration-700 ease-out" />
+
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-black/10 opacity-90 group-hover:opacity-80 transition-opacity duration-500" />
+
+                <div className="absolute inset-0 p-8 flex flex-col justify-end z-20">
+                  <div className="mb-6 p-4 bg-white/5 backdrop-blur-md rounded-2xl w-fit border border-white/10 group-hover:-translate-y-2 transition-transform duration-500">
+                    {pillar.icon}
+                  </div>
+                  <h3 className="text-2xl font-display font-bold text-white mb-3 group-hover:text-sky-300 transition-colors duration-300 transform group-hover:-translate-y-2">
+                    {pillar.title}
+                  </h3>
+                  <div className="h-0 opacity-0 group-hover:h-auto group-hover:opacity-100 transition-all duration-500 transform translate-y-4 group-hover:translate-y-0">
+                    <p className="text-blue-100/70 text-sm font-light leading-relaxed whitespace-pre-line">
+                      {pillar.desc}
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </motion.section>
+
       {/* 🔹 OUR TEAM SECTION: Vector-led presentation */}
       {/* <motion.section
         className="py-24 bg-black"
@@ -383,10 +449,16 @@ const Home: React.FC = () => {
                     {post.excerpt}
                   </p>
                   <div className="flex items-center pt-2 text-sky-400 text-xs font-semibold uppercase tracking-wider group-hover:gap-3 transition-all duration-300">
-                    <span>Read more</span>
+                    <span>Read Research</span>
                     <ArrowRight className="w-3.5 h-3.5 ml-1 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
                   </div>
                 </div>
+                {/* Make the entire card a clickable link to external research or /research */}
+                {post.link ? (
+                  <a href={post.link} target="_blank" rel="noopener noreferrer" className="absolute inset-0 z-30" />
+                ) : (
+                  <Link to="/research" className="absolute inset-0 z-30" />
+                )}
               </motion.article>
             ))}
           </motion.div>

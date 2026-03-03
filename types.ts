@@ -31,6 +31,7 @@ export interface BlogPost {
   author: string;
   category: string;
   image: string;
+  link?: string;
 }
 
 export interface ResearchPaper {

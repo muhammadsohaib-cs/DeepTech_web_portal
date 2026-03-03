@@ -77,29 +77,32 @@ export const SUMMIT_PILLARS = [
 export const BLOG_POSTS: BlogPost[] = [
   {
     id: '1',
-    title: 'Why Nanotech is the Future of Medicine',
-    excerpt: 'Exploring how drug delivery nanoparticles are changing treatments across the globe...',
+    title: 'A new spin on quantum cryptography: Avoiding trapdoors and embracing public keys',
+    excerpt: 'An investigation of post-quantum cryptographic standards and their integration into existing sovereign defense networks.',
     date: 'Dec 15, 2025',
-    author: 'DeepTech Team',
-    category: 'Science',
-    image: 'https://picsum.photos/seed/blog-science/800/500'
+    author: 'Research Team',
+    category: 'Quantum Tech',
+    image: 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&q=80&w=1200',
+    link: 'https://arxiv.org/abs/1109.3235'
   },
   {
     id: '2',
-    title: 'The Gap Between Theses and Ten-Figure Businesses',
-    excerpt: 'Identifying why Pakistani research often stays in libraries and how we are changing it...',
+    title: 'Functional Synthetic Biology',
+    excerpt: 'Evaluating the potential of engineered genomes and programming logic at the cellular level.',
     date: 'Jan 05, 2026',
-    author: 'Visionary Editorial',
-    category: 'Entrepreneurship',
-    image: 'https://picsum.photos/seed/blog-entrepreneurship/800/500'
+    author: 'Biotech Lab',
+    category: 'Biotechnology',
+    image: 'https://images.unsplash.com/photo-1576086213369-97a306d36557?auto=format&fit=crop&q=80&w=1200',
+    link: 'https://arxiv.org/abs/2207.00538'
   },
   {
     id: '3',
-    title: 'Building a Silicon Valley in Lahore',
-    excerpt: 'The roadmap to creating a self-sustaining DeepTech ecosystem in the heart of Pakistan...',
+    title: 'Synthetic Biology meets Neuromorphic Computing: Towards bio-inspired Perception',
+    excerpt: 'A study on neuromorphic chip architectures designed to mimic human neural pathways and reduce AI energy loads.',
     date: 'Feb 12, 2026',
-    author: 'Research Hub',
-    category: 'Ecosystem',
-    image: 'https://picsum.photos/seed/blog-ecosystem/800/500'
+    author: 'AI Core Group',
+    category: 'Artificial Intelligence',
+    image: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&q=80&w=1200',
+    link: 'https://arxiv.org/abs/2504.10053'
   }
 ];
