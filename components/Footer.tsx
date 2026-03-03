@@ -11,7 +11,7 @@ const Footer: React.FC = () => {
             <div className="flex items-center space-x-2">
               <Rocket className="text-primary w-8 h-8" />
               <span className="font-display font-bold text-2xl tracking-tight">
-                DEEP<span className="text-primary">TECH</span> 2026
+                DEEP<span className="text-primary">TECH</span>
               </span>
             </div>
             <p className="text-gray-400 leading-relaxed">
@@ -35,15 +35,15 @@ const Footer: React.FC = () => {
             <ul className="space-y-4 text-gray-400">
               <li className="flex items-start space-x-3">
                 <Mail className="w-5 h-5 text-primary mt-1" />
-                <span>info@deeptechsummit.pk</span>
+                <span>info@globaldeeptech.org</span>
               </li>
               <li className="flex items-start space-x-3">
                 <Phone className="w-5 h-5 text-primary mt-1" />
-                <span>+92 300 1234567</span>
+                <span>+92 3172903943</span>
               </li>
               <li className="flex items-start space-x-3">
                 <MapPin className="w-5 h-5 text-primary mt-1" />
-                <span>Main Campus, FCCU, Lahore</span>
+                <span>Salim Habib University, Karachi</span>
               </li>
             </ul>
           </div>

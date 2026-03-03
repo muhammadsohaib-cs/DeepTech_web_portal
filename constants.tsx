@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Beaker, Briefcase, Zap, Globe, Cpu, Users } from 'lucide-react';
+import { Beaker, Briefcase, Zap, Globe, Cpu, Users, Rocket } from 'lucide-react';
 import { BlogPost } from './types';
 
 export const NAV_LINKS = [
@@ -13,22 +13,40 @@ export const NAV_LINKS = [
 
 export const TEAM_MEMBERS = [
   {
-    name: 'Scientific Strategy',
-    role: 'Research & Innovation',
-    desc: 'Leading the bridge between academic research and commercial viability.',
-    icon: <Beaker className="w-8 h-8 text-primary" />
+    name: 'Azhar Rizvi',
+    role: 'Principal Advisor',
+    desc: 'Providing strategic guidance and global expertise for the DeepTech ecosystem.',
+    icon: <Users className="w-8 h-8 text-primary" />
   },
   {
-    name: 'Venture Relations',
-    role: 'Investment & Scaling',
-    desc: 'Connecting deeptech startups with global venture capital pools.',
+    name: 'Neha Ahsan',
+    role: 'Founding Director',
+    desc: 'Driving the vision and leadership of the DeepTech Global Organization.',
+    icon: <Rocket className="w-8 h-8 text-primary" />
+  },
+  {
+    name: 'Muhammad Sohaib',
+    role: 'Partnerships and Outreach',
+    desc: 'Building bridges between academia, industry, and global stakeholders.',
+    icon: <Briefcase className="w-8 h-8 text-primary" />
+  },
+  {
+    name: 'Rohaan Khan',
+    role: 'Operations & Growth',
+    desc: 'Ensuring seamless execution of events and organizational logistics.',
+    icon: <Globe className="w-8 h-8 text-primary" />
+  },
+  {
+    name: 'Muhammad Hunzala',
+    role: 'Marketing Lead',
+    desc: 'Managing brand identity and promoting the community\'s impact.',
     icon: <Zap className="w-8 h-8 text-primary" />
   },
   {
-    name: 'Ecosystem Growth',
-    role: 'Community & Partnerships',
-    desc: 'Building the network that supports founders from lab to revenue.',
-    icon: <Globe className="w-8 h-8 text-primary" />
+    name: 'Areesha Amir',
+    role: 'Creative Design',
+    desc: 'Creating engaging visual and written content to represent our vision.',
+    icon: <Beaker className="w-8 h-8 text-primary" />
   }
 ];
 
@@ -64,7 +82,7 @@ export const BLOG_POSTS: BlogPost[] = [
     date: 'Dec 15, 2025',
     author: 'DeepTech Team',
     category: 'Science',
-    image: 'https://picsum.photos/seed/blog1/800/400'
+    image: 'https://picsum.photos/seed/blog-science/800/500'
   },
   {
     id: '2',
@@ -73,7 +91,7 @@ export const BLOG_POSTS: BlogPost[] = [
     date: 'Jan 05, 2026',
     author: 'Visionary Editorial',
     category: 'Entrepreneurship',
-    image: 'https://picsum.photos/seed/blog2/800/400'
+    image: 'https://picsum.photos/seed/blog-entrepreneurship/800/500'
   },
   {
     id: '3',
@@ -82,6 +100,6 @@ export const BLOG_POSTS: BlogPost[] = [
     date: 'Feb 12, 2026',
     author: 'Research Hub',
     category: 'Ecosystem',
-    image: 'https://picsum.photos/seed/blog3/800/400'
+    image: 'https://picsum.photos/seed/blog-ecosystem/800/500'
   }
 ];

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ArrowRight, Calendar, User, Target, Rocket, ShieldCheck, Zap, Beaker, Globe } from 'lucide-react';
+import { ArrowRight, Calendar, Target, Rocket, ShieldCheck, Cpu, Atom, Dna, Bot, BatteryCharging, Layers } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion, useMotionTemplate, useMotionValue } from 'framer-motion';
 import Button from '../components/Button';
@@ -8,7 +8,7 @@ import { BLOG_POSTS, TEAM_MEMBERS } from '../constants';
 import InteractiveBackground from '../components/InteractiveBackground';
 import { TechCore, DataStream, CircuitNode, DeepVisionGraphic } from '../components/AnimatedTech';
 
-const fadeInUp = {
+const fadeInUp: any = {
   hidden: { opacity: 0, y: 100, scale: 0.95 },
   visible: {
     opacity: 1,
@@ -18,7 +18,7 @@ const fadeInUp = {
   }
 };
 
-const staggerContainer = {
+const staggerContainer: any = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
@@ -28,6 +28,45 @@ const staggerContainer = {
     }
   }
 };
+
+const deepTechDomains = [
+  {
+    name: 'Artificial Intelligence',
+    desc: 'Foundation models, autonomous systems, and cognitive infrastructure.',
+    icon: Cpu,
+    accent: 'from-cyan-400/40 to-blue-500/10',
+  },
+  {
+    name: 'Nanotechnology',
+    desc: 'Molecular-scale engineering for sensors, chips, and smart surfaces.',
+    icon: Atom,
+    accent: 'from-purple-400/40 to-fuchsia-500/10',
+  },
+  {
+    name: 'Biotechnology',
+    desc: 'Synthetic biology, therapeutics, and programmable living systems.',
+    icon: Dna,
+    accent: 'from-emerald-400/40 to-teal-500/10',
+  },
+  {
+    name: 'Robotics',
+    desc: 'Human-centric automation, mechatronics, and intelligent machines.',
+    icon: Bot,
+    accent: 'from-amber-400/40 to-orange-500/10',
+  },
+  {
+    name: 'Clean Energy',
+    desc: 'Next‑gen storage, grids, and climate‑positive technologies.',
+    icon: BatteryCharging,
+    accent: 'from-lime-400/40 to-emerald-500/10',
+  },
+  {
+    name: 'Advanced Materials',
+    desc: 'Meta‑materials, composites, and extreme‑performance substrates.',
+    icon: Layers,
+    accent: 'from-sky-400/40 to-indigo-500/10',
+  },
+];
 
 const SpotlightCard: React.FC<{
   children: React.ReactNode;
@@ -87,28 +126,23 @@ const Home: React.FC = () => {
             >
 
               <motion.h1 variants={fadeInUp} className="font-display font-extrabold text-3xl sm:text-5xl lg:text-7xl leading-[1.0] tracking-tighter text-white max-w-4xl">
-                FROM <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-blue-500 to-purple-600 drop-shadow-[0_0_20px_rgba(56,189,248,0.2)] animate-gradient-x">
-                  IDEAS
-                </span> <br />
-                <span className="text-white/90">TO INDUSTRY</span>
+                DEEPTECH GLOBAL <br />
+                <span className="text-white/90 uppercase italic">Organization</span>
               </motion.h1>
 
               <motion.p variants={fadeInUp} className="text-base text-blue-100/60 max-w-2xl leading-relaxed font-light tracking-wide">
-                Connecting researchers, startups, and investors to transform scientific ideas into scalable global businesses. From lab to market, we are the catalyst for Pakistan's future.
+                Establishing a structured innovation ecosystem globally. We bridge the critical gap between academic excellence and commercialization pathways across the deep technology landscape.
               </motion.p>
 
               <motion.div variants={fadeInUp} className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto pt-6">
                 <a href="https://chat.whatsapp.com/dummy-link" target="_blank" rel="noopener noreferrer">
-                  <Button size="lg" className="relative overflow-hidden w-full sm:w-auto px-7 py-3 text-sm font-bold bg-[#38bdf8] text-black hover:bg-[#0ea5e9] border border-[#38bdf8] shadow-[0_0_25px_rgba(56,189,248,0.25)] rounded-full group transition-all transform hover:scale-105 active:scale-95 hover:shadow-[0_0_40px_rgba(56,189,248,0.4)]">
-                    <span className="relative z-10 flex items-center">
-                      Join Community
-                      <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                    </span>
-                    <div className="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_2s_infinite] bg-gradient-to-r from-transparent via-white/25 to-transparent z-0" />
+                  <Button variant="primary" size="lg" className="w-full sm:w-auto group/btn">
+                    Join Community
+                    <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
                   </Button>
                 </a>
                 <Link to="/about">
-                  <Button variant="outline" size="lg" className="w-full sm:w-auto px-7 py-3 text-sm font-medium border-white/10 hover:bg-white/5 hover:border-white/20 text-white rounded-full backdrop-blur-md transition-all transform hover:scale-105 active:scale-95">
+                  <Button variant="outline" size="lg" className="w-full sm:w-auto">
                     Our Vision
                   </Button>
                 </Link>
@@ -138,14 +172,11 @@ const Home: React.FC = () => {
             </motion.div>
 
             <motion.h2 variants={fadeInUp} className="font-display font-extrabold text-3xl md:text-5xl tracking-tighter text-white max-w-4xl leading-[1.1]">
-              A PERMANENT CATALYST FOR <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-blue-500 to-purple-600 drop-shadow-[0_0_20px_rgba(56,189,248,0.2)] animate-gradient-x">
-                SCIENTIFIC WEALTH
-              </span>
+              A HUB FOR RESEARCH IMPACT
             </motion.h2>
 
             <motion.p variants={fadeInUp} className="text-base text-blue-100/60 max-w-3xl leading-relaxed font-light tracking-wide mx-auto">
-              Pakistan's universities are powerhouses of raw intelligence. Our vision is to ensure no breakthrough remains a dusty thesis. We are building the infrastructure that transforms laboratory successes into market-dominating industries.
+              Breaking the boundaries of traditional academia. DeepTech Global is dedicated to ensuring that groundbreaking research translates into real-world solutions, startups, and economic impact.
             </motion.p>
 
             <motion.div variants={staggerContainer} className="grid md:grid-cols-2 gap-6 pt-6 w-full max-w-4xl">
@@ -174,8 +205,85 @@ const Home: React.FC = () => {
         </div>
       </motion.section>
 
-      {/* 🔹 OUR TEAM SECTION: Vector-led presentation */}
+      {/* 🔹 BEYOND SOFTWARE SECTION */}
       <motion.section
+        className="py-24 bg-black relative overflow-hidden border-b border-white/5"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: '-100px' }}
+        variants={staggerContainer}
+      >
+        <div className="absolute inset-0 bg-gradient-to-b from-cyan-500/5 via-transparent to-purple-500/5 pointer-events-none" />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <motion.div
+            className="flex flex-col items-center text-center space-y-6"
+            variants={staggerContainer}
+          >
+            <motion.p
+              variants={fadeInUp}
+              className="text-[10px] font-semibold tracking-[0.3em] text-sky-400 uppercase"
+            >
+              Beyond Software
+            </motion.p>
+            <motion.h2
+              variants={fadeInUp}
+              className="font-display font-extrabold text-3xl md:text-5xl tracking-tighter text-white leading-[1.1]"
+            >
+              BEYOND SOFTWARE
+            </motion.h2>
+            <motion.p
+              variants={fadeInUp}
+              className="text-base md:text-lg text-blue-100/70 max-w-3xl leading-relaxed font-light tracking-wide"
+            >
+              Driving breakthrough innovations grounded in hard science and advanced engineering
+              across the global landscape.
+            </motion.p>
+          </motion.div>
+
+          {/* Sliding domains rail */}
+          <div className="mt-12 w-full">
+            <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-r from-white/5 via-white/0 to-white/5 px-2 py-4">
+              <div className="pointer-events-none absolute left-0 top-0 h-full w-24 bg-gradient-to-r from-black via-black/60 to-transparent" />
+              <div className="pointer-events-none absolute right-0 top-0 h-full w-24 bg-gradient-to-l from-black via-black/60 to-transparent" />
+              <motion.div
+                className="flex gap-4 md:gap-6 min-w-max py-1"
+                animate={{ x: ['0%', '-50%'] }}
+                transition={{ duration: 30, ease: 'linear', repeat: Infinity }}
+              >
+                {[...deepTechDomains, ...deepTechDomains].map((domain, index) => {
+                  const Icon = domain.icon;
+                  return (
+                    <div
+                      key={`${domain.name}-${index}`}
+                      className="group relative min-w-[210px] md:min-w-[260px] rounded-2xl border border-white/10 bg-black/40 px-5 py-4 flex flex-col gap-2 hover:border-sky-500/40 hover:bg-black/70 transition-all duration-500"
+                    >
+                      <div
+                        className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br ${domain.accent}`}
+                      />
+                      <div className="relative z-10 flex items-center gap-3">
+                        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/5 border border-white/10 shadow-inner shadow-sky-500/20">
+                          <Icon className="w-5 h-5 text-sky-300 group-hover:text-white transition-colors" />
+                        </div>
+                        <div className="text-left">
+                          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-sky-300">
+                            {domain.name}
+                          </p>
+                        </div>
+                      </div>
+                      <p className="relative z-10 text-[11px] md:text-xs text-blue-100/70 leading-relaxed font-light">
+                        {domain.desc}
+                      </p>
+                    </div>
+                  );
+                })}
+              </motion.div>
+            </div>
+          </div>
+        </div>
+      </motion.section>
+
+      {/* 🔹 OUR TEAM SECTION: Vector-led presentation */}
+      {/* <motion.section
         className="py-24 bg-black"
         initial="hidden"
         whileInView="visible"
@@ -208,9 +316,9 @@ const Home: React.FC = () => {
             ))}
           </motion.div>
         </div>
-      </motion.section>
+      </motion.section> */}
 
-      {/* 🔹 NEWS SECTION */}
+      {/* 🔹 DEEPTECH INTELLIGENCE SECTION */}
       <motion.section
         className="py-24 bg-black relative overflow-hidden border-t border-white/5"
         initial="hidden"
@@ -222,7 +330,7 @@ const Home: React.FC = () => {
           <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-8">
             <motion.div variants={fadeInUp} className="space-y-4">
               <h2 className="font-display font-extrabold text-3xl md:text-5xl tracking-tighter text-white">
-                DEEPTECH <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-blue-500 to-purple-600 animate-gradient-x">INTELLIGENCE</span>
+                DEEPTECH INTELLIGENCE
               </h2>
               <p className="text-blue-100/60 max-w-xl text-base font-light tracking-wide">
                 Stay informed on the scientific breakthroughs shaping Pakistan's future.
@@ -230,7 +338,7 @@ const Home: React.FC = () => {
             </motion.div>
             <motion.div variants={fadeInUp}>
               <a href="https://chat.whatsapp.com/dummy-link" target="_blank" rel="noopener noreferrer">
-                <Button variant="outline" className="rounded-full px-6 py-2.5 text-xs border-white/10 hover:bg-white/5 hover:border-white/20 text-white backdrop-blur-md transition-all">
+                <Button variant="outline" size="sm" className="px-5 py-2.5">
                   Join WhatsApp Hub
                 </Button>
               </a>
@@ -239,26 +347,44 @@ const Home: React.FC = () => {
 
           <motion.div variants={staggerContainer} className="grid md:grid-cols-3 gap-6">
             {BLOG_POSTS.map((post) => (
-              <motion.article variants={fadeInUp} key={post.id} className="group bg-white/5 border border-white/10 rounded-3xl overflow-hidden hover:border-sky-500/30 transition-all duration-500 flex flex-col hover:shadow-2xl hover:shadow-sky-500/10 hover:-translate-y-1">
-                <div className="aspect-video bg-black/40 flex items-center justify-center p-8 overflow-hidden relative border-b border-white/5">
-                  <div className="absolute inset-0 opacity-10 scale-150 pointer-events-none">
-                    <DataStream />
-                  </div>
-                  <div className="relative z-10 w-16 h-16 text-sky-500/80 group-hover:scale-110 transition-transform duration-500 group-hover:text-sky-400">
-                    {post.id === '1' ? <Beaker size={56} strokeWidth={1} /> : post.id === '2' ? <Zap size={56} strokeWidth={1} /> : <Globe size={56} strokeWidth={1} />}
-                  </div>
-                </div>
-                <div className="p-6 space-y-3 flex-grow flex flex-col">
-                  <div className="flex items-center space-x-3 text-[9px] font-bold uppercase tracking-widest text-sky-400">
-                    <span className="bg-sky-500/10 px-2.5 py-1 rounded-full border border-sky-500/20">{post.category}</span>
-                  </div>
-                  <h3 className="text-xl font-bold leading-tight text-white group-hover:text-sky-400 transition-colors">{post.title}</h3>
-                  <p className="text-gray-400 text-sm leading-relaxed font-light line-clamp-3">{post.excerpt}</p>
-                  <div className="pt-5 mt-auto border-t border-white/5 flex items-center justify-between text-[10px] text-gray-500 font-medium uppercase tracking-wider">
-                    <div className="flex items-center">
-                      <Calendar className="w-3.5 h-3.5 mr-2 text-sky-500" />
+              <motion.article
+                variants={fadeInUp}
+                key={post.id}
+                className="group relative bg-black/60 border border-white/10 rounded-2xl overflow-hidden flex flex-col hover:border-sky-500/40 transition-all duration-500 hover:shadow-xl hover:shadow-sky-500/10 hover:-translate-y-2 cursor-pointer"
+                whileHover={{ scale: 1.02 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+              >
+                {/* Image with zoom & overlay */}
+                <div className="aspect-[4/3] overflow-hidden relative">
+                  <img
+                    src={post.image}
+                    alt={post.title}
+                    className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80" />
+                  <div className="absolute inset-0 bg-sky-500/0 group-hover:bg-sky-500/10 transition-colors duration-500" />
+                  <div className="absolute bottom-0 left-0 right-0 p-4 flex items-center justify-between">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-sky-400 bg-sky-500/20 px-2.5 py-1 rounded-full border border-sky-500/30 backdrop-blur-sm">
+                      {post.category}
+                    </span>
+                    <div className="flex items-center text-[10px] text-white/80 font-medium">
+                      <Calendar className="w-3.5 h-3.5 mr-1.5 text-sky-400" />
                       {post.date}
                     </div>
+                  </div>
+                </div>
+
+                {/* Content */}
+                <div className="p-5 space-y-3 flex-grow flex flex-col">
+                  <h3 className="text-lg font-bold leading-tight text-white group-hover:text-sky-300 transition-colors duration-300 line-clamp-2">
+                    {post.title}
+                  </h3>
+                  <p className="text-gray-400 text-sm leading-relaxed font-light line-clamp-3 flex-grow">
+                    {post.excerpt}
+                  </p>
+                  <div className="flex items-center pt-2 text-sky-400 text-xs font-semibold uppercase tracking-wider group-hover:gap-3 transition-all duration-300">
+                    <span>Read more</span>
+                    <ArrowRight className="w-3.5 h-3.5 ml-1 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
                   </div>
                 </div>
               </motion.article>
@@ -279,18 +405,15 @@ const Home: React.FC = () => {
           <TechCore />
         </div>
         <motion.div variants={fadeInUp} className="relative z-10 space-y-6">
-          <h2 className="font-display font-extrabold text-4xl md:text-7xl tracking-tighter text-white">
-            READY TO <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-blue-500 to-purple-600 animate-gradient-x">DISRUPT?</span>
+          <h2 className="font-display font-extrabold text-2xl md:text-4xl tracking-tighter text-white">
+            READY TO JOIN DEEPTECH
           </h2>
           <p className="text-lg md:text-xl text-blue-100/60 max-w-2xl font-light tracking-wide mx-auto">
             The largest gathering of Pakistani DeepTech minds is coming. Don't just watch the future—build it.
           </p>
           <a href="https://chat.whatsapp.com/dummy-link" target="_blank" rel="noopener noreferrer" className="block pt-6">
-            <Button size="lg" className="relative overflow-hidden px-10 py-4 text-base font-bold bg-[#38bdf8] text-black hover:bg-[#0ea5e9] border border-[#38bdf8] shadow-[0_0_30px_rgba(56,189,248,0.3)] rounded-full group transition-all transform hover:scale-105 active:scale-95 hover:shadow-[0_0_50px_rgba(56,189,248,0.5)]">
-              <span className="relative z-10 flex items-center">
-                Join the Movement
-              </span>
-              <div className="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_2s_infinite] bg-gradient-to-r from-transparent via-white/25 to-transparent z-0" />
+            <Button variant="primary" size="lg" className="px-10 py-4">
+              Join the Movement
             </Button>
           </a>
         </motion.div>

@@ -44,14 +44,14 @@ const Header: React.FC = () => {
   // Helper to render links (avoids code duplication)
   const renderNavLink = (link: NavLink, isMobile: boolean = false) => {
     const baseClasses = isMobile
-      ? "text-2xl font-display font-semibold py-4 border-b border-white/10 block w-full"
-      : "px-3 py-2 text-sm font-medium transition-colors";
+      ? "text-lg font-sans font-medium py-4 border-b border-white/10 block w-full tracking-wide"
+      : "px-4 py-2.5 text-[13px] font-sans font-medium tracking-wide transition-all duration-300";
 
     const activeClasses = location.pathname === link.href
-      ? "text-primary"
-      : "text-gray-300 hover:text-white";
+      ? "text-sky-400"
+      : "text-white/70 hover:text-white";
 
-    const mobileHover = isMobile ? "hover:text-primary transition-colors text-white" : "";
+    const mobileHover = isMobile ? "hover:text-sky-400 transition-colors text-white" : "";
 
     const combinedClasses = `${baseClasses} ${!isMobile ? activeClasses : mobileHover}`;
 
@@ -111,35 +111,36 @@ const Header: React.FC = () => {
               <div className="flex items-center gap-4 ml-4">
                 {user.isAdmin && (
                   <Link to="/admin">
-                    <Button size="sm" className="bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 px-3 py-2 rounded-full flex items-center gap-2">
+                    <Button variant="outline" size="sm" className="bg-red-500/10 hover:bg-red-500/20 text-red-400 border-red-500/30 hover:border-red-500/50 px-4 py-2 flex items-center gap-2">
                       <ShieldAlert className="w-4 h-4" />
                       <span className="hidden md:inline">Admin</span>
                     </Button>
                   </Link>
                 )}
                 <Link to="/profile" className="flex items-center gap-2 group">
-                  <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-700 border border-white/20 group-hover:border-sky-500 transition-colors">
+                  <div className="w-8 h-8 rounded-full overflow-hidden bg-white/10 border border-white/20 group-hover:border-sky-500/50 transition-all duration-300">
                     {user.profileImage ? (
                       <img src={user.profileImage} alt={user.name} className="w-full h-full object-cover" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
-                        <User className="w-4 h-4 text-white" />
+                        <User className="w-4 h-4 text-white/80" />
                       </div>
                     )}
                   </div>
-                  <span className="text-gray-300 text-sm group-hover:text-white transition-colors">{user.name}</span>
+                  <span className="text-white/80 text-[13px] font-medium tracking-wide group-hover:text-white transition-colors">{user.name}</span>
                 </Link>
                 <Button
+                  variant="outline"
                   size="sm"
                   onClick={handleLogout}
-                  className="bg-white/10 hover:bg-white/20 text-white border border-white/10 px-3 py-2 rounded-full flex items-center gap-2"
+                  className="bg-white/5 hover:bg-white/10 border-white/10 text-white/90 hover:text-white px-4 py-2 flex items-center gap-2"
                 >
                   <LogOut className="w-4 h-4" />
                 </Button>
               </div>
             ) : (
-              <Link to="/login">
-                <Button size="sm" className="ml-4 bg-sky-500 hover:bg-sky-600 text-white font-bold px-6 py-2 rounded-full shadow-[0_0_15px_rgba(56,189,248,0.3)] transition-all hover:shadow-[0_0_25px_rgba(56,189,248,0.5)]">
+              <Link to="/login" className="ml-2">
+                <Button variant="nav-primary" size="sm" className="px-5 py-2.5">
                   Sign In
                 </Button>
               </Link>
@@ -150,10 +151,10 @@ const Header: React.FC = () => {
           <div className="lg:hidden z-50">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="text-gray-300 hover:text-white p-2 focus:outline-none"
+              className="text-white/80 hover:text-white p-2 focus:outline-none focus:ring-2 focus:ring-sky-500/50 rounded-lg transition-colors"
               aria-label="Toggle menu"
             >
-              {isOpen ? <X className="w-8 h-8" /> : <Menu className="w-8 h-8" />}
+              {isOpen ? <X className="w-7 h-7" /> : <Menu className="w-7 h-7" />}
             </button>
           </div>
         </div>
@@ -172,27 +173,29 @@ const Header: React.FC = () => {
               <div className="mt-8 pt-8 border-t border-white/10">
                 {user.isAdmin && (
                   <Link to="/admin" onClick={() => setIsOpen(false)} className="block mb-4">
-                    <Button className="w-full bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 font-bold py-3 rounded-xl flex justify-center items-center gap-2">
+                    <Button variant="outline" fullWidth className="w-full bg-red-500/10 hover:bg-red-500/20 text-red-400 border-red-500/30 py-3 rounded-xl flex justify-center items-center gap-2">
                       <ShieldAlert className="w-5 h-5" />
                       Admin Dashboard
                     </Button>
                   </Link>
                 )}
                 <Link to="/profile" className="flex items-center gap-3 mb-6" onClick={() => setIsOpen(false)}>
-                  <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-700 border border-white/20">
+                  <div className="w-12 h-12 rounded-full overflow-hidden bg-white/10 border border-white/20">
                     {user.profileImage ? (
                       <img src={user.profileImage} alt={user.name} className="w-full h-full object-cover" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
-                        <User className="w-6 h-6 text-white" />
+                        <User className="w-6 h-6 text-white/80" />
                       </div>
                     )}
                   </div>
-                  <span className="text-xl text-white font-semibold">{user.name}</span>
+                  <span className="text-lg text-white font-medium tracking-wide">{user.name}</span>
                 </Link>
                 <Button
+                  variant="outline"
                   onClick={handleLogout}
-                  className="w-full bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 font-bold py-3 rounded-xl flex justify-center items-center gap-2"
+                  fullWidth
+                  className="w-full bg-red-500/10 hover:bg-red-500/20 text-red-400 border-red-500/30 py-3 rounded-xl flex justify-center items-center gap-2"
                 >
                   <LogOut className="w-5 h-5" />
                   Logout
@@ -200,7 +203,7 @@ const Header: React.FC = () => {
               </div>
             ) : (
               <Link to="/login" onClick={() => setIsOpen(false)} className="mt-4">
-                <Button className="w-full bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 rounded-xl shadow-[0_0_15px_rgba(56,189,248,0.3)]">
+                <Button variant="nav-primary" fullWidth className="w-full py-3.5 rounded-xl">
                   Sign In
                 </Button>
               </Link>
