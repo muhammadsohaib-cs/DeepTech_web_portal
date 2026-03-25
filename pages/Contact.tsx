@@ -32,8 +32,38 @@ const Contact: React.FC = () => {
         <div className="text-center mb-16 space-y-4">
           <h1 className="text-5xl font-display font-bold">Get In <span className="text-primary">Touch</span></h1>
           <p className="text-gray-400 max-w-2xl mx-auto">
-            Have questions about the summit, speaking opportunities, or partnerships? Reach out to us.
+            Have questions about DeepTech, speaking opportunities, or partnerships? Reach out to us.
           </p>
+        </div>
+
+        {/* Industry Collaboration */}
+        <div className="mb-20 glass-effect p-8 md:p-12 rounded-[2rem] border-primary/20 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-[80px]"></div>
+          <div className="grid md:grid-cols-2 gap-12 relative z-10 items-center">
+            <div className="space-y-6">
+              <h2 className="text-3xl md:text-4xl font-display font-bold">Industry Collaboration</h2>
+              <p className="text-gray-300 leading-relaxed font-light">
+                Industry partners can collaborate with the DeepTech Student Network to support innovation. This collaboration strengthens the connection between universities and industry innovation needs.
+              </p>
+            </div>
+            <div className="space-y-4">
+              <h3 className="font-semibold text-primary uppercase tracking-widest text-sm mb-4">Collaboration Opportunities</h3>
+              <ul className="grid sm:grid-cols-2 gap-4">
+                {[
+                  "Sponsoring student challenges",
+                  "Providing real-world problem statements",
+                  "Mentoring student teams",
+                  "Offering internships",
+                  "Supporting prototype development"
+                ].map((item, idx) => (
+                  <li key={idx} className="flex items-center space-x-3 text-gray-300 text-sm">
+                    <div className="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></div>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-16">
@@ -75,18 +105,18 @@ const Contact: React.FC = () => {
             <div className="space-y-4">
               <h4 className="text-xl font-display font-bold">Quick Message via:</h4>
               <div className="grid grid-cols-2 gap-4">
-                <Button 
-                  onClick={handleWhatsApp} 
-                  variant="secondary" 
-                  fullWidth 
+                <Button
+                  onClick={handleWhatsApp}
+                  variant="secondary"
+                  fullWidth
                   className="bg-green-600 hover:bg-green-700 text-white"
                 >
                   <MessageCircle className="w-5 h-5 mr-2" />
                   WhatsApp
                 </Button>
-                <Button 
-                  onClick={() => window.location.href = 'mailto:info@deeptechsummit.pk'} 
-                  variant="outline" 
+                <Button
+                  onClick={() => window.location.href = 'mailto:info@deeptechsummit.pk'}
+                  variant="outline"
                   fullWidth
                 >
                   <Mail className="w-5 h-5 mr-2" />
@@ -102,8 +132,8 @@ const Contact: React.FC = () => {
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label className="text-sm font-semibold text-gray-400 uppercase tracking-wider">Full Name</label>
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     name="name"
                     required
                     value={formData.name}
@@ -114,8 +144,8 @@ const Contact: React.FC = () => {
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-semibold text-gray-400 uppercase tracking-wider">Email Address</label>
-                  <input 
-                    type="email" 
+                  <input
+                    type="email"
                     name="email"
                     required
                     value={formData.email}
@@ -127,8 +157,8 @@ const Contact: React.FC = () => {
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-semibold text-gray-400 uppercase tracking-wider">Subject</label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   name="subject"
                   required
                   value={formData.subject}
@@ -139,7 +169,7 @@ const Contact: React.FC = () => {
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-semibold text-gray-400 uppercase tracking-wider">Message</label>
-                <textarea 
+                <textarea
                   name="message"
                   required
                   rows={5}

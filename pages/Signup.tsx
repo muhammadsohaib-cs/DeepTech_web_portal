@@ -4,6 +4,8 @@ import { Mail, Lock, User, ArrowRight, Eye, EyeOff, X } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import Button from '../components/Button';
 import { DataStream } from '../components/AnimatedTech'; // Reusing animation for cohesion
+import { useAuth } from '../context/AuthContext';
+import { useGoogleLogin } from '@react-oauth/google';
 
 const fadeInUp = {
     hidden: { opacity: 0, y: 20 },
@@ -18,6 +20,7 @@ const Signup: React.FC = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const navigate = useNavigate();
+    const { login } = useAuth();
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -56,10 +59,41 @@ const Signup: React.FC = () => {
         }
     };
 
-    const handleGoogleSignup = () => {
-        // TODO: Implement Google OAuth
-        console.log('Continue with Google');
-    };
+    const handleGoogleSignup = useGoogleLogin({
+        onSuccess: async (tokenResponse) => {
+            setLoading(true);
+            setError('');
+            try {
+                // Fetch the user data from Google API
+                const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+                    headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
+                });
+
+                if (!res.ok) throw new Error('Failed to fetch Google profile details');
+
+                const googleData = await res.json();
+
+                // On a production app, this connects to the backend to create an account
+                const newGoogleUser = {
+                    _id: googleData.sub,
+                    name: googleData.name,
+                    email: googleData.email,
+                    isAdmin: false,
+                    profileImage: googleData.picture
+                };
+
+                login(newGoogleUser);
+                navigate('/');
+            } catch (err: any) {
+                setError(err.message || 'Google Signup failed');
+            } finally {
+                setLoading(false);
+            }
+        },
+        onError: () => {
+            setError('Google Signup was unsuccessful');
+        }
+    });
 
     return (
         <div className="relative min-h-screen bg-black flex items-center justify-center overflow-hidden p-6">
@@ -67,7 +101,6 @@ const Signup: React.FC = () => {
             <div className="absolute inset-0 z-0">
                 <div className="absolute bottom-1/4 left-1/4 w-96 h-96 bg-sky-500/10 rounded-full blur-[100px] animate-pulse"></div>
                 <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-[100px] animate-pulse delay-1000"></div>
-                <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 contrast-150 mix-blend-overlay"></div>
             </div>
 
             <div className="relative z-10 w-full max-w-5xl grid lg:grid-cols-2 gap-8 items-center">
@@ -109,7 +142,7 @@ const Signup: React.FC = () => {
 
                     {error && (
                         <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-500 text-sm flex items-center gap-2">
-                             <span className="w-1.5 h-1.5 rounded-full bg-red-500"></span>
+                            <span className="w-1.5 h-1.5 rounded-full bg-red-500"></span>
                             {error}
                         </div>
                     )}
@@ -228,7 +261,7 @@ const Signup: React.FC = () => {
 
                     {/* Google Button */}
                     <button
-                        onClick={handleGoogleSignup}
+                        onClick={() => handleGoogleSignup()}
                         className="w-full flex items-center justify-center gap-3 bg-white text-black font-semibold py-3.5 rounded-xl hover:bg-gray-200 transition-all active:scale-[0.98] hover:shadow-[0_0_20px_rgba(255,255,255,0.2)]"
                     >
                         <svg className="w-5 h-5" viewBox="0 0 24 24">

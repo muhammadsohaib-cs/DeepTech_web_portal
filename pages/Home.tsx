@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ArrowRight, Calendar, Target, Rocket, ShieldCheck, Cpu, Atom, Dna, Bot, BatteryCharging, Layers } from 'lucide-react';
+import { ArrowRight, Calendar, Target, Rocket, ShieldCheck, Cpu, Atom, Dna, Bot, BatteryCharging, Layers, Users, Briefcase } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion, useMotionTemplate, useMotionValue } from 'framer-motion';
 import Button from '../components/Button';
@@ -126,12 +126,12 @@ const Home: React.FC = () => {
             >
 
               <motion.h1 variants={fadeInUp} className="font-display font-extrabold text-3xl sm:text-5xl lg:text-7xl leading-[1.0] tracking-tighter text-white max-w-4xl">
-                DEEPTECH GLOBAL <br />
-                <span className="text-white/90 uppercase italic">Organization</span>
+                Welcome to the DeepTech <br />
+                <span className="text-white/90 uppercase italic text-4xl sm:text-5xl lg:text-6xl mt-2 block">Student Network</span>
               </motion.h1>
 
-              <motion.p variants={fadeInUp} className="text-base text-blue-100/60 max-w-2xl leading-relaxed font-light tracking-wide">
-                Establishing a structured innovation ecosystem globally. We bridge the critical gap between academic excellence and commercialization pathways across the deep technology landscape.
+              <motion.p variants={fadeInUp} className="text-base md:text-lg text-blue-100/60 max-w-2xl leading-relaxed font-light tracking-wide">
+                A national community of university students exploring how science, engineering, and advanced technologies can solve real-world problems.
               </motion.p>
 
               <motion.div variants={fadeInUp} className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto pt-6">
@@ -153,7 +153,7 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* 🔹 OUR VISION SECTION: Refined visual and professional layout */}
+      {/* 🔹 WHAT WE DO: Based on the "Short Description" */}
       <motion.section
         className="py-24 bg-black relative overflow-hidden border-y border-white/5"
         initial="hidden"
@@ -172,33 +172,31 @@ const Home: React.FC = () => {
             </motion.div>
 
             <motion.h2 variants={fadeInUp} className="font-display font-extrabold text-3xl md:text-5xl tracking-tighter text-white max-w-4xl leading-[1.1]">
-              A HUB FOR RESEARCH IMPACT
+              IMPACT BEYOND APPS
             </motion.h2>
 
             <motion.p variants={fadeInUp} className="text-base text-blue-100/60 max-w-3xl leading-relaxed font-light tracking-wide mx-auto">
-              Breaking the boundaries of traditional academia. DeepTech Global is dedicated to ensuring that groundbreaking research translates into real-world solutions, startups, and economic impact.
+              The DeepTech Student Network brings together students from biosciences, computer science, engineering, medicine, environmental science, business, and other disciplines. Unlike simple apps, DeepTech focuses on breakthroughs in science and advanced technology to build solutions to real societal problems.
             </motion.p>
 
-            <motion.div variants={staggerContainer} className="grid md:grid-cols-2 gap-6 pt-6 w-full max-w-4xl">
-              <motion.div variants={fadeInUp} className="h-full">
-                <SpotlightCard className="h-full p-6 text-left hover:-translate-y-1 transition-transform duration-500" spotlightColor="rgba(56, 189, 248, 0.15)">
-                  <div className="mb-5 p-3.5 bg-blue-500/10 rounded-2xl w-fit group-hover:bg-blue-500/20 transition-colors relative z-10">
-                    <Rocket className="text-sky-400 w-6 h-6" />
-                  </div>
-                  <h4 className="text-xl font-bold text-white mb-2 relative z-10">Accelerated Commercialization</h4>
-                  <p className="text-gray-400 font-light leading-relaxed text-sm relative z-10">Reducing the time-to-market for deep science products from years to months through structured pipelines.</p>
-                </SpotlightCard>
-              </motion.div>
-
-              <motion.div variants={fadeInUp} className="h-full">
-                <SpotlightCard className="h-full p-6 text-left hover:-translate-y-1 transition-transform duration-500" spotlightColor="rgba(168, 85, 247, 0.15)">
-                  <div className="mb-5 p-3.5 bg-purple-500/10 rounded-2xl w-fit group-hover:bg-purple-500/20 transition-colors relative z-10">
-                    <ShieldCheck className="text-purple-400 w-6 h-6" />
-                  </div>
-                  <h4 className="text-xl font-bold text-white mb-2 relative z-10">Intellectual Property Shield</h4>
-                  <p className="text-gray-400 font-light leading-relaxed text-sm relative z-10">Helping researchers protect and monetize their unique scientific contributions on a global scale.</p>
-                </SpotlightCard>
-              </motion.div>
+            <motion.div variants={staggerContainer} className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 pt-6 w-full max-w-6xl">
+              {[
+                { title: 'Learn', icon: Dna, desc: 'Learn about emerging DeepTech fields and breakthrough discoveries.', color: 'rgba(56, 189, 248, 0.15)', accent: 'bg-blue-500/10 text-sky-400' },
+                { title: 'Project Focus', icon: Bot, desc: 'Work on interdisciplinary projects combining multiple fields of science.', color: 'rgba(168, 85, 247, 0.15)', accent: 'bg-purple-500/10 text-purple-400' },
+                { title: 'Collaborate', icon: Users, desc: 'Collaborate with other universities and diverse student talent.', color: 'rgba(52, 211, 153, 0.15)', accent: 'bg-emerald-500/10 text-emerald-400' },
+                { title: 'Industry Connect', icon: Briefcase, desc: 'Connect with industry leaders solving today\'s massive challenges.', color: 'rgba(251, 191, 36, 0.15)', accent: 'bg-amber-500/10 text-amber-400' },
+                { title: 'Real Solutions', icon: Rocket, desc: 'Build foundational solutions to real-world societal problems.', color: 'rgba(239, 68, 68, 0.15)', accent: 'bg-red-500/10 text-red-400' }
+              ].map((item, idx) => (
+                <motion.div variants={fadeInUp} className="h-full" key={idx}>
+                  <SpotlightCard className="h-full p-6 text-left hover:-translate-y-1 transition-transform duration-500" spotlightColor={item.color}>
+                    <div className={`mb-5 p-3.5 rounded-2xl w-fit transition-colors relative z-10 ${item.accent}`}>
+                      <item.icon className="w-6 h-6" />
+                    </div>
+                    <h4 className="text-xl font-bold text-white mb-2 relative z-10">{item.title}</h4>
+                    <p className="text-gray-400 font-light leading-relaxed text-sm relative z-10">{item.desc}</p>
+                  </SpotlightCard>
+                </motion.div>
+              ))}
             </motion.div>
 
           </div>
@@ -223,20 +221,19 @@ const Home: React.FC = () => {
               variants={fadeInUp}
               className="text-[10px] font-semibold tracking-[0.3em] text-sky-400 uppercase"
             >
-              Beyond Software
+              The Technologies of Tomorrow
             </motion.p>
             <motion.h2
               variants={fadeInUp}
               className="font-display font-extrabold text-3xl md:text-5xl tracking-tighter text-white leading-[1.1]"
             >
-              BEYOND SOFTWARE
+              EXPLORE DEEPTECH DOMAINS
             </motion.h2>
             <motion.p
               variants={fadeInUp}
               className="text-base md:text-lg text-blue-100/70 max-w-3xl leading-relaxed font-light tracking-wide"
             >
-              Driving breakthrough innovations grounded in hard science and advanced engineering
-              across the global landscape.
+              Discover the breakthroughs in science and advanced technology shaping the future.
             </motion.p>
           </motion.div>
 
@@ -293,33 +290,33 @@ const Home: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center space-y-6 mb-16">
             <motion.p variants={fadeInUp} className="text-[10px] font-semibold tracking-[0.3em] text-sky-400 uppercase">
-              The Protocol
+              University Ecosystem
             </motion.p>
             <motion.h2 variants={fadeInUp} className="font-display font-extrabold text-3xl md:text-5xl tracking-tighter text-white">
-              ECOSYSTEM <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-blue-500 to-purple-600">ARCHITECTURE</span>
+              START A <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-blue-500 to-purple-600">DEEPTECH SOCIETY</span>
             </motion.h2>
             <motion.p variants={fadeInUp} className="text-blue-100/60 max-w-2xl mx-auto text-base font-light tracking-wide">
-              We operate at the convergence of three critical domains, transforming theoretical science into dominant market forces.
+              Create a DeepTech community in your university to promote exploration, interdisciplinary collaboration, and research projects.
             </motion.p>
           </div>
 
           <motion.div variants={staggerContainer} className="grid md:grid-cols-3 gap-8">
             {[
               {
-                title: "Academic Excellence",
-                desc: "Sourcing breakthrough IP from top-tier research institutions and scientific laboratories.",
+                title: "1. Form a Team",
+                desc: "Gather a founding team of at least 5 students passionate about science and tech.",
                 img: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=800",
-                icon: <Atom className="w-6 h-6 text-sky-400" />
+                icon: <Users className="w-6 h-6 text-sky-400" />
               },
               {
-                title: "Industrial Execution",
-                desc: "Applying hardcore engineering and operational supremacy to scale deep-tech ventures globally.",
+                title: "2. Secure an Advisor",
+                desc: "Identify a faculty advisor who supports student innovation and technical research.",
                 img: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=800",
-                icon: <Cpu className="w-6 h-6 text-purple-400" />
+                icon: <Atom className="w-6 h-6 text-purple-400" />
               },
               {
-                title: "Institutional Capital",
-                desc: "Deploying strategic venture funding to ensure continuous momentum and market dominance.",
+                title: "3. Register Society",
+                desc: "Submit your annual activity plan and register your society on the DeepTech platform.",
                 img: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=800",
                 icon: <Rocket className="w-6 h-6 text-emerald-400" />
               }
@@ -396,18 +393,18 @@ const Home: React.FC = () => {
           <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-8">
             <motion.div variants={fadeInUp} className="space-y-4">
               <h2 className="font-display font-extrabold text-3xl md:text-5xl tracking-tighter text-white">
-                DEEPTECH INTELLIGENCE
+                STUDENT PROJECT SHOWCASE
               </h2>
               <p className="text-blue-100/60 max-w-xl text-base font-light tracking-wide">
-                Stay informed on the scientific breakthroughs shaping Pakistan's future.
+                See innovative projects developed by students across universities globally and locally.
               </p>
             </motion.div>
             <motion.div variants={fadeInUp}>
-              <a href="https://chat.whatsapp.com/dummy-link" target="_blank" rel="noopener noreferrer">
+              <Link to="/projects">
                 <Button variant="outline" size="sm" className="px-5 py-2.5">
-                  Join WhatsApp Hub
+                  View All Projects
                 </Button>
-              </a>
+              </Link>
             </motion.div>
           </div>
 
@@ -453,11 +450,11 @@ const Home: React.FC = () => {
                     <ArrowRight className="w-3.5 h-3.5 ml-1 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
                   </div>
                 </div>
-                {/* Make the entire card a clickable link to external research or /research */}
+                {/* Make the entire card a clickable link to external research or /projects */}
                 {post.link ? (
                   <a href={post.link} target="_blank" rel="noopener noreferrer" className="absolute inset-0 z-30" />
                 ) : (
-                  <Link to="/research" className="absolute inset-0 z-30" />
+                  <Link to="/projects" className="absolute inset-0 z-30" />
                 )}
               </motion.article>
             ))}
@@ -478,16 +475,23 @@ const Home: React.FC = () => {
         </div>
         <motion.div variants={fadeInUp} className="relative z-10 space-y-6">
           <h2 className="font-display font-extrabold text-2xl md:text-4xl tracking-tighter text-white">
-            READY TO JOIN DEEPTECH
+            JOIN THE MOVEMENT
           </h2>
           <p className="text-lg md:text-xl text-blue-100/60 max-w-2xl font-light tracking-wide mx-auto">
-            The largest gathering of Pakistani DeepTech minds is coming. Don't just watch the future—build it.
+            Become part of a national student innovation network. Let's solve humanity's most important problems together.
           </p>
-          <a href="https://chat.whatsapp.com/dummy-link" target="_blank" rel="noopener noreferrer" className="block pt-6">
-            <Button variant="primary" size="lg" className="px-10 py-4">
-              Join the Movement
-            </Button>
-          </a>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-6">
+            <Link to="/signup">
+              <Button variant="primary" size="lg" className="px-10 py-4 w-full sm:w-auto">
+                Register as Student
+              </Button>
+            </Link>
+            <a href="https://chat.whatsapp.com/dummy-link" target="_blank" rel="noopener noreferrer">
+              <Button variant="outline" size="lg" className="px-10 py-4 w-full sm:w-auto">
+                Join Community
+              </Button>
+            </a>
+          </div>
         </motion.div>
       </motion.section>
     </div>

@@ -15,6 +15,9 @@ import { AuthProvider } from './context/AuthContext';
 import Verification from './pages/Verification';
 import Profile from './pages/Profile';
 import Research from './pages/Research';
+import Society from './pages/Society';
+import Hub from './pages/Hub';
+import Projects from './pages/Projects';
 import AdminLayout from './pages/Admin/AdminLayout';
 import AdminDash from './pages/Admin/Dashboard';
 import AdminUsers from './pages/Admin/Users';
@@ -35,6 +38,9 @@ const MainLayout = () => (
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
+        <Route path="/society" element={<Society />} />
+        <Route path="/hub" element={<Hub />} />
+        <Route path="/projects" element={<Projects />} />
         <Route path="/summit-2026" element={<Summit />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/why-attend" element={<WhyAttend />} />

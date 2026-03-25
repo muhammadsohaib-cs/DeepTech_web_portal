@@ -134,12 +134,15 @@ const About: React.FC = () => {
             variants={staggerContainer}
             className="space-y-6"
           >
-            <motion.h1 variants={fadeInUp} className="font-display font-extrabold text-3xl sm:text-4xl lg:text-5xl leading-[1.0] tracking-tighter text-white max-w-4xl mx-auto">
-              DEEPTECH GLOBAL
+            <motion.h1 variants={fadeInUp} className="font-display font-extrabold text-3xl sm:text-4xl lg:text-5xl leading-[1.0] tracking-tighter text-white max-w-4xl mx-auto uppercase">
+              What is DeepTech?
             </motion.h1>
 
             <motion.p variants={fadeInUp} className="text-base md:text-lg text-blue-100/60 max-w-2xl leading-relaxed font-light tracking-wide mx-auto">
-              A sovereign mission dedicated to strengthening the world's deep technology ecosystem by connecting academic excellence, industrial prowess, and venture capital.
+              DeepTech refers to technologies built on advanced scientific discoveries and engineering innovation. These technologies aim to solve complex problems in areas such as healthcare, climate change, agriculture, space exploration, and advanced manufacturing.
+            </motion.p>
+            <motion.p variants={fadeInUp} className="text-sm md:text-base text-blue-100/50 max-w-3xl leading-relaxed font-light tracking-wide mx-auto mt-4">
+              Unlike simple software products, DeepTech solutions usually involve scientific research, advanced engineering, long-term experimentation, and collaboration between multiple disciplines. DeepTech innovations often take years of research and testing, but they have the potential to transform industries and improve millions of lives.
             </motion.p>
           </motion.div>
         </div>
@@ -169,21 +172,21 @@ const About: React.FC = () => {
               <motion.div variants={fadeInUp} className="space-y-3">
                 <span className="text-sky-500 font-mono text-[10px] uppercase tracking-[0.4em] font-semibold block">The Challenge</span>
                 <h2 className="font-display font-extrabold text-2xl md:text-4xl tracking-tighter text-white leading-[1.1]">
-                  BRIDGING THE INNOVATION GAP
+                  WHY DEEPTECH MATTERS
                 </h2>
                 <div className="w-16 h-0.5 bg-sky-500/30 rounded-full"></div>
               </motion.div>
 
               <motion.p variants={fadeInUp} className="text-blue-100/60 text-sm md:text-base font-light leading-relaxed max-w-2xl">
-                While scientific talent is abundant, high-potential research often stagnates in laboratories. DeepTech Global systematically addresses these critical failure points to accelerate commercial readiness.
+                The world is facing major challenges. Solving these challenges requires science-based innovation, not just simple applications.
               </motion.p>
 
               <div className="grid sm:grid-cols-2 gap-3">
                 {[
-                  { title: "IP Stagnation", desc: "Unlocking dormant intellectual property in labs." },
-                  { title: "Market Scaling", desc: "Defining clear pathways to global commerciality." },
-                  { title: "Venture Synergy", desc: "Aligning deep technical talent with industrial need." },
-                  { title: "Capital Access", desc: "Connecting founders with specialized deep-tech funding." }
+                  { title: "Climate change", desc: "Developing carbon capture, renewable energy, and smart water management." },
+                  { title: "Disease & Pandemics", desc: "Using biotechnology for vaccines, medicines, and rapid disease detection." },
+                  { title: "Food shortages", desc: "Creating sustainable and smart agriculture solutions utilizing advanced science." },
+                  { title: "Energy & Scarcity", desc: "Ensuring energy sustainability and solving water scarcity issues globally." }
                 ].map((item, i) => (
                   <motion.div
                     key={i}
@@ -208,11 +211,11 @@ const About: React.FC = () => {
                   <div className="absolute inset-0 p-6 md:p-8 flex flex-col justify-end">
                     <Lightbulb className="w-8 h-8 text-sky-400 mb-4 opacity-80" />
                     <blockquote className="text-lg md:text-xl font-display font-medium text-white leading-[1.4]">
-                      "We don't just facilitate research; we catalyze the conversion of <span className="text-sky-400 font-bold">Human Intelligence</span> into <span className="text-blue-400 font-bold">Global Impact</span>."
+                      "DeepTech gives students the opportunity to contribute to global challenges while building exciting careers in <span className="text-sky-400 font-bold">research, technology,</span> and <span className="text-blue-400 font-bold">entrepreneurship.</span>"
                     </blockquote>
                     <div className="mt-6 flex items-center space-x-3">
                       <div className="h-px w-6 bg-sky-500/30"></div>
-                      <span className="text-[9px] font-mono text-sky-500/70 uppercase tracking-[0.3em] font-semibold">Sovereign Mission</span>
+                      <span className="text-[9px] font-mono text-sky-500/70 uppercase tracking-[0.3em] font-semibold">Our Mission</span>
                     </div>
                   </div>
                 </div>
@@ -301,10 +304,10 @@ const About: React.FC = () => {
                 className="sticky top-32 space-y-6"
               >
                 <h2 className="font-display font-extrabold text-2xl md:text-4xl tracking-tighter text-white leading-[1.1]">
-                  THE STRATEGIC ROADMAP
+                  HOW DEEPTECH HELPS STUDENTS
                 </h2>
                 <p className="text-blue-100/60 text-sm md:text-base font-light leading-relaxed tracking-wide">
-                  Building a global framework where scientific breakthroughs meet institutionalized capital and industrial execution.
+                  DeepTech projects empower students to grow beyond textbooks through hands-on interdisciplinary learning and direct industry connections.
                 </p>
                 <div className="pt-6 flex justify-center md:justify-start">
                   <TechCore className="w-40 h-40 opacity-20" />
@@ -314,11 +317,9 @@ const About: React.FC = () => {
 
             <div className="md:w-2/3 grid gap-5">
               {[
-                { title: "Global Summit Series", desc: "Orchestrating worldwide events that unite researchers, sovereign wealth funds, and industry leaders.", icon: <Globe />, image: ABOUT_IMAGES.summit },
-                { title: "Venture Builder Workshops", desc: "Advanced training in IP protection, commercial modeling, and deep-tech fundraising strategies.", icon: <Rocket />, image: ABOUT_IMAGES.workshop },
-                { title: "Cross-Border Hackathons", desc: "High-stakes technical marathons solving trillion-dollar global problems through interdisciplinary collaboration.", icon: <Target />, image: ABOUT_IMAGES.hackathon },
-                { title: "Research LP Showcases", desc: "Exclusive platforms for presenting high-TRL research to institutional investors and corporate venture arms.", icon: <Lightbulb />, image: ABOUT_IMAGES.challenge },
-                { title: "Strategic Advisory Forums", desc: "Advising governments and organizations on building resilient deep-tech innovation architectures.", icon: <Users />, image: ABOUT_IMAGES.quote }
+                { title: "Academic Development", desc: "Apply classroom knowledge to real-world problems. Develop research skills, learn experimental thinking, and collaborate across disciplines.", icon: <Globe />, image: ABOUT_IMAGES.summit },
+                { title: "Career Opportunities", desc: "DeepTech careers are growing rapidly. Become an AI researcher, biotech scientist, robotics engineer, or deeptech entrepreneur.", icon: <Rocket />, image: ABOUT_IMAGES.workshop },
+                { title: "Industry Collaboration", desc: "Many industries look for innovative solutions. Collaborate with healthcare, agriculture, manufacturing, and environmental services.", icon: <Target />, image: ABOUT_IMAGES.hackathon }
               ].map((activity, i) => (
                 <motion.div
                   key={i}
@@ -470,12 +471,15 @@ const About: React.FC = () => {
             viewport={{ once: true }}
           >
             <h2 className="font-display font-extrabold text-2xl md:text-4xl tracking-tighter text-white leading-[1.1]">
-              A FORWARD IMPERATIVE
+              FINAL MESSAGE
             </h2>
           </motion.div>
 
           <p className="text-blue-100/60 text-base md:text-lg font-light leading-relaxed tracking-wide">
-            DeepTech Global is not merely a community; it is a structured initiative to build a futuristic civilization. We are committed to operating with unparalleled transparency and aligning all operations with the highest standards of global scientific excellence.
+            The world’s greatest innovations have come from curious students and determined researchers. DeepTech is not only about technology. It is about solving humanity’s most important problems.
+          </p>
+          <p className="text-blue-100/80 text-lg md:text-xl font-medium leading-relaxed tracking-wide mt-4">
+            The DeepTech Student Network invites you to learn, collaborate, and build technologies that can change the future.
           </p>
 
           {/* <div className="pt-6">

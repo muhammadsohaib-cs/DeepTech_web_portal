@@ -4,6 +4,7 @@ import { Mail, Lock, ArrowRight, Eye, EyeOff, X } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import Button from '../components/Button';
 import { useAuth } from '../context/AuthContext';
+import { useGoogleLogin } from '@react-oauth/google';
 // ... (imports remain)
 
 const fadeInUp = {
@@ -52,10 +53,42 @@ const Login: React.FC = () => {
         }
     };
 
-    const handleGoogleLogin = () => {
-        // TODO: Implement Google OAuth
+    const handleGoogleLogin = useGoogleLogin({
+        onSuccess: async (tokenResponse) => {
+            setLoading(true);
+            setError('');
+            try {
+                // Fetch the user data from Google API
+                const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+                    headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
+                });
 
-    };
+                if (!res.ok) throw new Error('Failed to fetch Google user data');
+
+                const googleData = await res.json();
+
+                // Usually, you would send this to your backend to create/verify the user.
+                // For now, we update the local auth context with the Google profile exactly as requested.
+                const googleUser = {
+                    _id: googleData.sub,
+                    name: googleData.name,
+                    email: googleData.email,
+                    isAdmin: false,
+                    profileImage: googleData.picture
+                };
+
+                login(googleUser);
+                navigate('/');
+            } catch (err: any) {
+                setError(err.message || 'Google Login failed');
+            } finally {
+                setLoading(false);
+            }
+        },
+        onError: () => {
+            setError('Google Login was unsuccessful');
+        }
+    });
 
     return (
         <div className="relative min-h-screen bg-black flex items-center justify-center overflow-hidden p-6">
@@ -63,7 +96,6 @@ const Login: React.FC = () => {
             <div className="absolute inset-0 z-0">
                 <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-sky-500/10 rounded-full blur-[100px] animate-pulse"></div>
                 <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-[100px] animate-pulse delay-1000"></div>
-                <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 contrast-150 mix-blend-overlay"></div>
             </div>
 
             <div className="relative z-10 w-full max-w-5xl grid lg:grid-cols-2 gap-8 items-center">
@@ -176,7 +208,7 @@ const Login: React.FC = () => {
 
                     {/* Google Button */}
                     <button
-                        onClick={handleGoogleLogin}
+                        onClick={() => handleGoogleLogin()}
                         className="w-full flex items-center justify-center gap-3 bg-white text-black font-semibold py-3.5 rounded-xl hover:bg-gray-200 transition-all active:scale-[0.98] hover:shadow-[0_0_20px_rgba(255,255,255,0.2)]"
                     >
                         <svg className="w-5 h-5" viewBox="0 0 24 24">
