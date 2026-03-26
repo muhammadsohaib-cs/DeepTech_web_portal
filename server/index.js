@@ -7,7 +7,7 @@ const fs = require('fs');
 const path = require('path');
 const cloudinary = require('cloudinary').v2;
 const multer = require('multer');
-const { Resend } = require('resend'); // IMPORT RESEND
+const nodemailer = require('nodemailer'); // IMPORT NODEMAILER
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -20,8 +20,16 @@ const uri = process.env.MONGODB_URI;
 const client = new MongoClient(uri);
 let db;
 
-// --- INITIALIZE RESEND ---
-const resend = new Resend(process.env.RESEND_API_KEY);
+// --- INITIALIZE NODEMAILER ---
+const transporter = nodemailer.createTransport({
+    host: process.env.SMTP_HOST || 'smtp.gmail.com',
+    port: parseInt(process.env.SMTP_PORT || '465'),
+    secure: true,
+    auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+    },
+});
 
 // --- HELPER: LOG ACTIVITY ---
 async function logActivity(action, userId, details = "") {
@@ -99,8 +107,8 @@ async function startServer() {
     }
 }
 
-if (!process.env.RESEND_API_KEY) {
-    console.warn("⚠️  WARNING: RESEND_API_KEY is missing in .env");
+if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+    console.warn("⚠️  WARNING: SMTP_USER or SMTP_PASS is missing in .env for Nodemailer");
 }
 
 startServer();
@@ -141,44 +149,42 @@ app.post('/api/auth/register', async (req, res) => {
         const result = await usersCollection.insertOne(newUser);
         logActivity("New User Registration", result.insertedId, `Email: ${email}`);
 
-        // --- SEND EMAIL VIA RESEND ---
+        // --- SEND EMAIL VIA NODEMAILER ---
         try {
-            console.log(`Sending email via Resend to ${email}...`);
-            
-            // IMPORTANT: If you haven't verified your domain in Resend yet, 
-            // you MUST use 'onboarding@resend.dev' as the "from" address for testing.
-            const { data, error } = await resend.emails.send({
-                from: 'DeepTech <noreply@globaldeeptech.org>',
+            console.log(`Sending email via Nodemailer to ${email}...`);
+
+            const mailOptions = {
+                from: `"DeepTech Portal" <${process.env.SMTP_USER || 'noreply@deeptech.org'}>`,
                 to: email,
                 subject: 'Verify your Account - DeepTech',
                 html: `
-                    <div style="font-family: Arial, sans-serif; padding: 20px;">
-                        <h2>Welcome to DeepTech !</h2>
-                        <p>Your verification code is:</p>
-                        <h1 style="color: #0E4FAF; letter-spacing: 5px;">${verificationCode}</h1>
-                        <p>This code will expire in 15 minutes.</p>
+                    <div style="font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f4;">
+                        <div style="background-color: white; padding: 30px; border-radius: 8px; max-w-md margin: auto;">
+                            <h2>Welcome to DeepTech!</h2>
+                            <p>Thank you for registering. Your verification code is:</p>
+                            <h1 style="color: #0E4FAF; letter-spacing: 5px; font-size: 32px; background: #e0f2fe; padding: 15px; border-radius: 8px; display: inline-block;">${verificationCode}</h1>
+                            <p>This code will expire in 15 minutes. Please enter it securely on the platform to activate your account.</p>
+                            <br/>
+                            <p style="font-size: 12px; color: #888;">If you did not request this, please safely ignore this email.</p>
+                        </div>
                     </div>
                 `
-            });
+            };
 
-            if (error) {
-                console.error("❌ Resend API Error:", error);
-                await usersCollection.deleteOne({ email }); // Rollback user
-                return res.status(500).json({ message: "Failed to send email", error: error.message });
-            }
+            const info = await transporter.sendMail(mailOptions);
 
-            console.log(`✅ Email sent successfully! Resend ID: ${data.id}`);
+            console.log(`✅ Email sent successfully! Message ID: ${info.messageId}`);
             res.status(201).json({ message: "User registered. Verification code sent.", email });
 
         } catch (emailError) {
             console.error("❌ Unexpected Email Error:", emailError);
             logActivity("Email Failed", result.insertedId, emailError.message);
-            
+
             // ROLLBACK: Delete user if email fails
             await usersCollection.deleteOne({ email });
-            return res.status(500).json({ 
-                message: "Email failed to send. Please check your address or try again.", 
-                error: emailError.message 
+            return res.status(500).json({
+                message: "Email failed to send. Please check your address or try again.",
+                error: emailError.message
             });
         }
 
@@ -204,7 +210,7 @@ app.post('/api/auth/verify', async (req, res) => {
 
         await usersCollection.updateOne({ email }, { $set: { verified: true, verificationCode: null } });
         logActivity("User Verified", user._id, `Email: ${email}`);
-        
+
         res.status(200).json({ message: "Verified successfully" });
     } catch (error) {
         res.status(500).json({ message: "Verification error" });
@@ -248,7 +254,7 @@ app.put('/api/user/update', upload.single('profileImage'), async (req, res) => {
 
         const usersCollection = db.collection("users");
         let userObjectId;
-        try { userObjectId = new ObjectId(userId); } catch(e) { return res.status(400).json({message: "Invalid ID"}); }
+        try { userObjectId = new ObjectId(userId); } catch (e) { return res.status(400).json({ message: "Invalid ID" }); }
 
         const user = await usersCollection.findOne({ _id: userObjectId });
         if (!user) return res.status(404).json({ message: "User not found" });
@@ -302,7 +308,7 @@ app.get('/api/research', async (req, res) => {
     try {
         const { authorId } = req.query;
         if (!db) return res.status(500).json({ message: "DB Disconnected" });
-        
+
         const query = authorId ? { authorId } : {};
         const papers = await db.collection("research_papers").find(query).sort({ createdAt: -1 }).toArray();
         res.status(200).json(papers);
@@ -348,8 +354,8 @@ app.get('/api/research/external', (req, res) => {
     const { query } = req.query;
     const https = require('https');
 
-    const searchQuery = query 
-        ? encodeURIComponent(query) 
+    const searchQuery = query
+        ? encodeURIComponent(query)
         : 'artificial+intelligence+OR+biotechnology+OR+quantum+computing';
 
     const url = `https://api.openalex.org/works?search=${searchQuery}&per_page=20&sort=publication_date:desc`;
@@ -363,7 +369,7 @@ app.get('/api/research/external', (req, res) => {
     https.get(url, options, (externalRes) => {
         if (externalRes.statusCode !== 200) {
             console.error(`OpenAlex API Error: ${externalRes.statusCode}`);
-            externalRes.resume(); 
+            externalRes.resume();
             return res.status(externalRes.statusCode).json({ message: "External API Limit/Error" });
         }
         res.set('Content-Type', 'application/json');
@@ -383,7 +389,7 @@ app.delete('/api/research/:id', async (req, res) => {
 
         const papers = db.collection("research_papers");
         const paper = await papers.findOne({ _id: new ObjectId(id) });
-        
+
         if (!paper) return res.status(404).json({ message: "Not found" });
         if (paper.authorId !== userId) return res.status(403).json({ message: "Unauthorized" });
 
@@ -391,7 +397,7 @@ app.delete('/api/research/:id', async (req, res) => {
         if (paper.fileUrl && paper.fileUrl.includes('/uploads/')) {
             const fname = paper.fileUrl.split('/').pop();
             const fpath = path.join(__dirname, 'uploads', fname);
-            if (fs.existsSync(fpath)) fs.unlink(fpath, () => {});
+            if (fs.existsSync(fpath)) fs.unlink(fpath, () => { });
         }
 
         await papers.deleteOne({ _id: new ObjectId(id) });
@@ -438,14 +444,14 @@ app.get('/api/admin/stats', verifyAdmin, async (req, res) => {
 
 app.get('/api/admin/users', verifyAdmin, async (req, res) => {
     try {
-        const users = await db.collection("users").find().sort({createdAt: -1}).toArray();
-        res.status(200).json(users.map(u => ({...u, password: "", verificationCode: ""})));
+        const users = await db.collection("users").find().sort({ createdAt: -1 }).toArray();
+        res.status(200).json(users.map(u => ({ ...u, password: "", verificationCode: "" })));
     } catch (e) { res.status(500).json({ message: "Users error" }); }
 });
 
 app.get('/api/admin/activity', verifyAdmin, async (req, res) => {
     try {
-        const logs = await db.collection("activities").find().sort({timestamp: -1}).limit(50).toArray();
+        const logs = await db.collection("activities").find().sort({ timestamp: -1 }).limit(50).toArray();
         res.status(200).json(logs);
     } catch (e) { res.status(500).json({ message: "Logs error" }); }
 });
