@@ -455,3 +455,35 @@ app.get('/api/admin/activity', verifyAdmin, async (req, res) => {
         res.status(200).json(logs);
     } catch (e) { res.status(500).json({ message: "Logs error" }); }
 });
+
+app.put('/api/admin/users/:id/role', verifyAdmin, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { isAdmin } = req.body;
+
+        if (!db) return res.status(500).json({ message: "DB Error" });
+
+        await db.collection("users").updateOne({ _id: new ObjectId(id) }, { $set: { isAdmin } });
+        logActivity(isAdmin ? "Promoted to Admin" : "Demoted to User", req.adminUser._id, `Target User ID: ${id}`);
+
+        res.status(200).json({ message: "Role updated" });
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({ message: "Role update failed" });
+    }
+});
+
+app.delete('/api/admin/users/:id', verifyAdmin, async (req, res) => {
+    try {
+        const { id } = req.params;
+        if (!db) return res.status(500).json({ message: "DB Error" });
+
+        await db.collection("users").deleteOne({ _id: new ObjectId(id) });
+        logActivity("Deleted User", req.adminUser._id, `Target User ID: ${id}`);
+
+        res.status(200).json({ message: "User deleted" });
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({ message: "Delete failed" });
+    }
+});

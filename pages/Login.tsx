@@ -41,11 +41,7 @@ const Login: React.FC = () => {
             }
 
             login(data.user); // Update auth context
-            if (data.user.isAdmin) {
-                navigate('/admin');
-            } else {
-                navigate('/');
-            }
+            navigate('/');
         } catch (err: any) {
             setError(err.message);
         } finally {

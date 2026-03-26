@@ -40,8 +40,9 @@ const AdminUsers: React.FC = () => {
         if (user?._id) fetchUsers();
     }, [user]);
 
-    const handleRoleUpdate = async (userId: string, currentStatus: boolean) => {
-        if (!window.confirm(`Are you sure you want to ${currentStatus ? 'demote' : 'promote'} this user?`)) return;
+    const handleRoleUpdate = async (userId: string, newStatus: boolean) => {
+        const actionText = newStatus ? 'promote to Admin' : 'demote to User';
+        if (!window.confirm(`Are you sure you want to ${actionText}?`)) return;
 
         try {
             const res = await fetch(`${API_URL}/api/admin/users/${userId}/role`, {
@@ -50,11 +51,15 @@ const AdminUsers: React.FC = () => {
                     'Content-Type': 'application/json',
                     'adminid': user?._id || ''
                 },
-                body: JSON.stringify({ isAdmin: !currentStatus })
+                body: JSON.stringify({ isAdmin: newStatus })
             });
 
             if (res.ok) {
                 fetchUsers(); // Refresh list
+                if (user?._id === userId) {
+                    alert("You have updated your own role.");
+                    window.location.reload();
+                }
             }
         } catch (e) {
             console.error(e);
@@ -136,13 +141,22 @@ const AdminUsers: React.FC = () => {
                                         )}
                                     </td>
                                     <td className="px-6 py-4">
-                                        <button
-                                            onClick={() => handleRoleUpdate(u._id, u.isAdmin)}
-                                            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg border transition-colors ${u.isAdmin ? 'bg-purple-500/10 border-purple-500/30 text-purple-400 hover:bg-purple-500/20' : 'bg-zinc-800 border-zinc-700 text-gray-400 hover:bg-zinc-700'}`}
-                                        >
-                                            {u.isAdmin ? <ShieldCheck className="w-3.5 h-3.5" /> : <Shield className="w-3.5 h-3.5" />}
-                                            <span>{u.isAdmin ? 'Admin' : 'User'}</span>
-                                        </button>
+                                        <div className="relative">
+                                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                {u.isAdmin ? <ShieldCheck className="w-3.5 h-3.5 text-purple-400" /> : <Shield className="w-3.5 h-3.5 text-gray-400" />}
+                                            </div>
+                                            <select
+                                                value={u.isAdmin ? 'Admin' : 'User'}
+                                                onChange={(e) => handleRoleUpdate(u._id, e.target.value === 'Admin')}
+                                                className={`appearance-none pl-8 pr-8 py-1.5 rounded-lg border transition-colors outline-none cursor-pointer text-sm font-medium
+                                                ${u.isAdmin ? 'bg-purple-500/10 border-purple-500/30 text-purple-400 hover:bg-purple-500/20'
+                                                        : 'bg-zinc-800 border-zinc-700 text-gray-400 hover:bg-zinc-700'}
+                                                `}
+                                            >
+                                                <option value="User" className="bg-zinc-900 text-gray-300">User</option>
+                                                <option value="Admin" className="bg-zinc-900 text-purple-400">Admin</option>
+                                            </select>
+                                        </div>
                                     </td>
                                     <td className="px-6 py-4 font-mono text-xs">
                                         {u.createdAt ? format(new Date(u.createdAt), 'MMM d, yyyy') : '-'}
