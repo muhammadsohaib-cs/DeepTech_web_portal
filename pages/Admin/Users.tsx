@@ -60,9 +60,13 @@ const AdminUsers: React.FC = () => {
                     alert("You have updated your own role.");
                     window.location.reload();
                 }
+            } else {
+                const data = await res.json();
+                alert(`Error: ${data.message || 'Update failed'}`);
             }
-        } catch (e) {
+        } catch (e: any) {
             console.error(e);
+            alert(`Network error: ${e.message}`);
         }
     };
 
