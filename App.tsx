@@ -16,12 +16,14 @@ import Verification from './pages/Verification';
 import Profile from './pages/Profile';
 import Research from './pages/Research';
 import Society from './pages/Society';
+import SocietyRegistration from './pages/SocietyRegistration';
 import Hub from './pages/Hub';
 import Projects from './pages/Projects';
 import AdminLayout from './pages/Admin/AdminLayout';
 import AdminDash from './pages/Admin/Dashboard';
 import AdminUsers from './pages/Admin/Users';
 import AdminActivity from './pages/Admin/Activity';
+import AdminSocieties from './pages/Admin/Societies';
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -68,6 +70,7 @@ const App: React.FC = () => {
           {/* Auth Routes (Standalone) */}
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/register-society" element={<SocietyRegistration />} />
           <Route path="/verification" element={<Verification />} />
           <Route path="/profile" element={<Profile />} />
 
@@ -75,6 +78,7 @@ const App: React.FC = () => {
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<AdminDash />} />
             <Route path="users" element={<AdminUsers />} />
+            <Route path="societies" element={<AdminSocieties />} />
             <Route path="activity" element={<AdminActivity />} />
           </Route>
 

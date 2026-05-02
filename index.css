@@ -1,0 +1,44 @@
+@import "tailwindcss";
+@config "./tailwind.config.js";
+
+@layer base {
+  body {
+    @apply bg-black text-white font-sans overflow-x-hidden;
+    scroll-behavior: smooth;
+  }
+}
+
+@layer utilities {
+  .glass-effect {
+    background: rgba(10, 10, 10, 0.4);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(14, 79, 175, 0.15);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+  }
+  .text-glow {
+    text-shadow: 0 0 20px rgba(14, 79, 175, 0.8);
+  }
+  .grid-bg {
+    background-image: 
+      radial-gradient(circle at 1px 1px, rgba(14, 79, 175, 0.15) 1px, transparent 0);
+    background-size: 50px 50px;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #000;
+}
+::-webkit-scrollbar-thumb {
+  background: #0E4FAF;
+  border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3A74D1;
+}
+
+.animate-in {
+  animation-delay: calc(var(--index) * 100ms);
+}

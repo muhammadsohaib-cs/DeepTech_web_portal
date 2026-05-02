@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion, useMotionTemplate, useMotionValue } from 'framer-motion';
-import { Users, FileText, CheckCircle, Shield, Award, Calendar } from 'lucide-react';
+import { Users, FileText, CheckCircle, Shield, Award, Calendar, ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const fadeInUp = {
     hidden: { opacity: 0, y: 50 },
@@ -46,19 +47,94 @@ const SpotlightCard: React.FC<{ children: React.ReactNode; className?: string; s
 };
 
 const Society: React.FC = () => {
+    const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
+    
+    const playlist = [
+        { title: "Step 1: Deep-Tech Societies Are Not Event Clubs", id: "kNwtu95df3I" },
+        { title: "Step 2: Start With Problems, Not Technologies", id: "TVO9OQ27fTQ" },
+        { title: "Step 3: Build Small, Build Fast, Build Often", id: "_c39lqm1auw" },
+        { title: "Step 4: Multidisciplinary Teams Win in Deep-Tech", id: "x5H4d_9EW6A" },
+        { title: "Step 5: Document Everything You Build", id: "kIedZk7TN-A" },
+        { title: "Step 6: Seek Mentors, Not Just Sponsors", id: "rCIakYM6UqY" },
+        { title: "Step 7: Focus on Local Problems First", id: "zOHxkvijXdw" },
+        { title: "Step 8: Share Progress Publicly", id: "YLvvoXxHdEw" },
+        { title: "Step 9: Deep-Tech Requires Patience", id: "sHlQDRmJcIA" },
+        { title: "Step 10: Build Publicly, Build a Movement", id: "Vg0POP301Yg" }
+    ];
+
+    const handleNext = () => {
+        if (currentVideoIndex < playlist.length - 1) {
+            setCurrentVideoIndex(currentVideoIndex + 1);
+        }
+    };
+
+    const handlePrev = () => {
+        if (currentVideoIndex > 0) {
+            setCurrentVideoIndex(currentVideoIndex - 1);
+        }
+    };
+
     return (
         <div className="bg-black min-h-screen pt-32 pb-24 text-white">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
                 {/* Header Section */}
                 <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="text-center mb-20 space-y-6">
-                    <motion.h1 variants={fadeInUp} className="text-4xl md:text-6xl font-display font-extrabold tracking-tighter">
-                        START A <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-blue-600">DEEPTECH SOCIETY</span>
+                    <motion.h4 variants={fadeInUp} className="text-sky-400 font-medium tracking-widest uppercase text-sm md:text-base">
+                        University Ecosystem
+                    </motion.h4>
+                    <motion.h1 variants={fadeInUp} className="text-5xl md:text-7xl font-display font-bold text-white tracking-tight">
+                        START A DEEPTECH SOCIETY
                     </motion.h1>
                     <motion.p variants={fadeInUp} className="text-lg md:text-xl text-blue-100/60 font-light max-w-3xl mx-auto">
                         A DeepTech Society is a student-led organization within a university that promotes innovation in science and technology. We encourage students to explore emerging technologies, collaborate across disciplines, and develop research projects.
                     </motion.p>
                 </motion.div>
+
+                {/* Video Playlist Section */}
+                <motion.section initial="hidden" whileInView="visible" viewport={{ once: true }} variants={staggerContainer} className="mb-24">
+                    <div className="text-center mb-8">
+                        <h2 className="text-3xl md:text-4xl font-display font-bold">DeepTech Society Masterclass</h2>
+                        <p className="text-blue-100/60 mt-4">Watch our 10-step guide to successfully launching and running your society.</p>
+                    </div>
+                    
+                    <div className="max-w-4xl mx-auto bg-zinc-900 border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
+                        <div className="aspect-video w-full bg-black">
+                            <iframe 
+                                className="w-full h-full"
+                                src={`https://www.youtube.com/embed/${playlist[currentVideoIndex].id}?rel=0&modestbranding=1`} 
+                                title="YouTube video player" 
+                                frameBorder="0" 
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                                allowFullScreen
+                            ></iframe>
+                        </div>
+                        
+                        <div className="p-6 bg-black/40 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
+                            <div>
+                                <h3 className="text-xl font-bold text-white">{playlist[currentVideoIndex].title}</h3>
+                                <p className="text-sm text-gray-400 mt-1">Video {currentVideoIndex + 1} of {playlist.length}</p>
+                            </div>
+                            
+                            <div className="flex items-center gap-3">
+                                <button 
+                                    onClick={handlePrev}
+                                    disabled={currentVideoIndex === 0}
+                                    className="px-4 py-2 bg-white/5 hover:bg-white/10 disabled:opacity-30 disabled:hover:bg-white/5 rounded-lg text-sm font-medium transition-colors"
+                                >
+                                    Previous
+                                </button>
+                                <button 
+                                    onClick={handleNext}
+                                    disabled={currentVideoIndex === playlist.length - 1}
+                                    className="px-4 py-2 bg-sky-500 hover:bg-sky-400 disabled:bg-sky-500/30 text-black font-bold rounded-lg text-sm transition-colors"
+                                >
+                                    Next Video
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </motion.section>
 
                 {/* Steps to Start */}
                 <motion.section initial="hidden" whileInView="visible" viewport={{ once: true }} variants={staggerContainer} className="mb-24">
@@ -172,6 +248,14 @@ const Society: React.FC = () => {
                             <p className="italic text-lg">"The DeepTech Society exists to encourage students to explore the frontiers of science and technology. Through curiosity, collaboration, and innovation, students can contribute to solving the most important challenges facing society today."</p>
                         </div>
                     </div>
+                </motion.section>
+                <motion.section initial="hidden" whileInView="visible" viewport={{ once: true }} variants={staggerContainer} className="mt-16 text-center">
+                    <Link to="/register-society" className="inline-block">
+                        <button className="group relative inline-flex items-center justify-center gap-3 px-8 py-4 bg-sky-500 hover:bg-sky-400 text-black font-bold text-lg rounded-full overflow-hidden transition-all shadow-[0_0_40px_rgba(14,165,233,0.4)] hover:shadow-[0_0_60px_rgba(14,165,233,0.6)]">
+                            <span className="relative z-10">Register Your Society Now</span>
+                            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                        </button>
+                    </Link>
                 </motion.section>
 
             </div>
