@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Activity, LayoutDashboard, LogOut, Users, ShieldAlert, Menu, X } from 'lucide-react';
+import { Activity, LayoutDashboard, LogOut, Users, ShieldAlert, Menu, X, Building2 } from 'lucide-react';
 
 const AdminLayout: React.FC = () => {
     const { user, logout } = useAuth();
@@ -23,6 +23,7 @@ const AdminLayout: React.FC = () => {
     const navItems = [
         { path: '/admin', label: 'Overview', icon: LayoutDashboard },
         { path: '/admin/users', label: 'User Management', icon: Users },
+        { path: '/admin/societies', label: 'Societies', icon: Building2 },
         { path: '/admin/activity', label: 'Activity Logs', icon: Activity },
     ];
 

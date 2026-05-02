@@ -6,15 +6,30 @@ import { useAuth } from '../../context/AuthContext';
 interface SocietyData {
     _id: string;
     instituteName: string;
-    focalName: string;
-    accountEmail: string;
-    email?: string;
     province: string;
     district?: string;
     tehsil?: string;
-    cnic?: string;
-    phone?: string;
+    
+    presidentName?: string;
+    presidentEmail?: string;
+    vpName?: string;
+    vpEmail?: string;
+    techLeadName?: string;
+    techLeadEmail?: string;
+    researchCoordName?: string;
+    researchCoordEmail?: string;
+    industryLiaisonName?: string;
+    industryLiaisonEmail?: string;
+
+    advisorName?: string;
+    advisorEmail?: string;
+    advisorDepartment?: string;
+
+    activityPlan?: string;
+
     username?: string;
+    accountEmail: string;
+    
     status: 'Pending' | 'Verified' | 'Rejected';
     createdAt: string;
 }
@@ -25,26 +40,52 @@ const AdminSocieties: React.FC = () => {
     const [societies, setSocieties] = useState<SocietyData[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
     const [selectedSociety, setSelectedSociety] = useState<SocietyData | null>(null);
 
+    // Helper to get admin ID from auth context or localStorage fallback
+    const getAdminId = (): string => {
+        if (user?._id) return user._id;
+        try {
+            const stored = localStorage.getItem('user');
+            if (stored) {
+                const parsed = JSON.parse(stored);
+                return parsed?.user?._id || parsed?._id || '';
+            }
+        } catch(e) { /* ignore */ }
+        return '';
+    };
+
     const fetchSocieties = async () => {
+        setLoading(true);
+        setError(null);
+        const adminId = getAdminId();
+        if (!adminId) {
+            setError('Admin ID not found. Please log in again.');
+            setLoading(false);
+            return;
+        }
         try {
             const res = await fetch(`${API_URL}/api/admin/societies`, {
-                headers: { 'adminid': user?._id || '' }
+                headers: { 'adminid': adminId }
             });
             if (res.ok) {
                 const data = await res.json();
                 setSocieties(data);
+            } else {
+                const errData = await res.json().catch(() => ({}));
+                setError(errData.message || `Server error: ${res.status}`);
             }
         } catch (err) {
-            console.error(err);
+            console.error('Fetch societies error:', err);
+            setError('Failed to connect to server.');
         } finally {
             setLoading(false);
         }
     };
 
     useEffect(() => {
-        if (user?._id) fetchSocieties();
+        fetchSocieties();
     }, [user]);
 
     const handleVerify = async (id: string, newStatus: 'Verified' | 'Rejected') => {
@@ -55,7 +96,7 @@ const AdminSocieties: React.FC = () => {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    'adminid': user?._id || ''
+                    'adminid': getAdminId()
                 },
                 body: JSON.stringify({ status: newStatus })
             });
@@ -80,9 +121,9 @@ const AdminSocieties: React.FC = () => {
     };
 
     const filteredSocieties = societies.filter(s =>
-        s.instituteName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (s.accountEmail || s.email || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-        s.focalName.toLowerCase().includes(searchTerm.toLowerCase())
+        (s.instituteName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (s.accountEmail || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (s.presidentName || '').toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     return (
@@ -122,7 +163,7 @@ const AdminSocieties: React.FC = () => {
                                         </div>
                                         <div>
                                             <p className="font-medium text-white">{soc.instituteName}</p>
-                                            <p className="text-xs text-gray-500">{soc.focalName} • {soc.accountEmail || soc.email}</p>
+                                            <p className="text-xs text-gray-500">Pres: {soc.presidentName || 'N/A'} • {soc.accountEmail}</p>
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">
@@ -180,11 +221,17 @@ const AdminSocieties: React.FC = () => {
                         </tbody>
                     </table>
                 </div>
-                {filteredSocieties.length === 0 && !loading && (
-                    <div className="p-8 text-center text-gray-500">No societies found.</div>
-                )}
                 {loading && (
-                    <div className="p-8 text-center text-gray-500 animate-pulse">Loading data...</div>
+                    <div className="p-8 text-center text-gray-500 animate-pulse">Loading societies data...</div>
+                )}
+                {error && (
+                    <div className="p-8 text-center">
+                        <p className="text-red-400 mb-3">{error}</p>
+                        <button onClick={fetchSocieties} className="px-4 py-2 bg-sky-500/20 text-sky-400 rounded-lg text-sm hover:bg-sky-500/30 transition-colors">Retry</button>
+                    </div>
+                )}
+                {!loading && !error && filteredSocieties.length === 0 && (
+                    <div className="p-8 text-center text-gray-500">No society registrations found.</div>
                 )}
             </div>
 
@@ -233,24 +280,58 @@ const AdminSocieties: React.FC = () => {
                             </div>
 
                             <div>
-                                <h3 className="text-sm font-semibold text-sky-400 uppercase tracking-wider mb-3">Focal Person Details</h3>
+                                <h3 className="text-sm font-semibold text-emerald-400 uppercase tracking-wider mb-3">Leadership Team</h3>
                                 <div className="grid grid-cols-2 gap-4 bg-black/20 p-4 rounded-xl border border-white/5">
                                     <div>
-                                        <p className="text-xs text-gray-500">Full Name</p>
-                                        <p className="text-sm font-medium text-white">{selectedSociety.focalName}</p>
+                                        <p className="text-xs text-gray-500">President</p>
+                                        <p className="text-sm font-medium text-white">{selectedSociety.presidentName}</p>
+                                        <p className="text-xs text-gray-500">{selectedSociety.presidentEmail}</p>
                                     </div>
                                     <div>
-                                        <p className="text-xs text-gray-500">CNIC</p>
-                                        <p className="text-sm font-medium text-white">{selectedSociety.cnic || 'N/A'}</p>
+                                        <p className="text-xs text-gray-500">Vice President</p>
+                                        <p className="text-sm font-medium text-white">{selectedSociety.vpName}</p>
+                                        <p className="text-xs text-gray-500">{selectedSociety.vpEmail}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-xs text-gray-500">Technical Lead</p>
+                                        <p className="text-sm font-medium text-white">{selectedSociety.techLeadName}</p>
+                                        <p className="text-xs text-gray-500">{selectedSociety.techLeadEmail}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-xs text-gray-500">Research Coordinator</p>
+                                        <p className="text-sm font-medium text-white">{selectedSociety.researchCoordName}</p>
+                                        <p className="text-xs text-gray-500">{selectedSociety.researchCoordEmail}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-xs text-gray-500">Industry Liaison</p>
+                                        <p className="text-sm font-medium text-white">{selectedSociety.industryLiaisonName}</p>
+                                        <p className="text-xs text-gray-500">{selectedSociety.industryLiaisonEmail}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <h3 className="text-sm font-semibold text-amber-400 uppercase tracking-wider mb-3">Faculty Advisor</h3>
+                                <div className="grid grid-cols-2 gap-4 bg-black/20 p-4 rounded-xl border border-white/5">
+                                    <div>
+                                        <p className="text-xs text-gray-500">Advisor Name</p>
+                                        <p className="text-sm font-medium text-white">{selectedSociety.advisorName}</p>
                                     </div>
                                     <div>
                                         <p className="text-xs text-gray-500">Email Address</p>
-                                        <p className="text-sm font-medium text-white">{selectedSociety.email || selectedSociety.accountEmail}</p>
+                                        <p className="text-sm font-medium text-white">{selectedSociety.advisorEmail}</p>
                                     </div>
-                                    <div>
-                                        <p className="text-xs text-gray-500">Phone Number</p>
-                                        <p className="text-sm font-medium text-white">{selectedSociety.phone || 'N/A'}</p>
+                                    <div className="col-span-2">
+                                        <p className="text-xs text-gray-500">Department</p>
+                                        <p className="text-sm font-medium text-white">{selectedSociety.advisorDepartment}</p>
                                     </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <h3 className="text-sm font-semibold text-rose-400 uppercase tracking-wider mb-3">Activity Plan</h3>
+                                <div className="bg-black/20 p-4 rounded-xl border border-white/5">
+                                    <p className="text-sm text-gray-300 whitespace-pre-wrap">{selectedSociety.activityPlan || 'No plan provided.'}</p>
                                 </div>
                             </div>
 

@@ -120,6 +120,38 @@ app.get('/', (req, res) => {
 
 // --- ROUTES ---
 
+// 1.5 SOCIETY REGISTER
+app.post('/api/society/register', async (req, res) => {
+    try {
+        if (!db) return res.status(500).json({ message: "Database not connected" });
+        const data = req.body;
+        
+        if (!data.instituteName || !data.accountEmail || !data.password) {
+            return res.status(400).json({ message: "Missing required fields" });
+        }
+        
+        const societiesCollection = db.collection("societies");
+        const existing = await societiesCollection.findOne({ accountEmail: data.accountEmail });
+        if (existing) return res.status(400).json({ message: "A society with this email already exists" });
+
+        const hashedPassword = await bcrypt.hash(data.password, 10);
+        
+        const newSociety = {
+            ...data,
+            password: hashedPassword,
+            status: "Pending",
+            createdAt: new Date()
+        };
+        delete newSociety.confirmPassword;
+
+        await societiesCollection.insertOne(newSociety);
+        res.status(201).json({ message: "Society registered successfully" });
+    } catch (error) {
+        console.error("Society Register Error:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+});
+
 // 1. REGISTER (USING RESEND)
 app.post('/api/auth/register', async (req, res) => {
     try {
@@ -434,6 +466,54 @@ app.put('/api/research/:id', upload.single('paper'), async (req, res) => {
 });
 
 // --- ADMIN ROUTES ---
+app.get('/api/admin/societies', verifyAdmin, async (req, res) => {
+    try {
+        if (!db) return res.status(500).json({ message: "DB Error" });
+        const societies = await db.collection("societies").find().sort({ createdAt: -1 }).toArray();
+        res.status(200).json(societies.map(s => { delete s.password; return s; }));
+    } catch (e) {
+        res.status(500).json({ message: "Error fetching societies" });
+    }
+});
+
+app.put('/api/admin/societies/:id/status', verifyAdmin, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { status } = req.body;
+        if (!db) return res.status(500).json({ message: "DB Error" });
+
+        const societies = db.collection("societies");
+        const society = await societies.findOne({ _id: new ObjectId(id) });
+        if (!society) return res.status(404).json({ message: "Society not found" });
+
+        await societies.updateOne({ _id: new ObjectId(id) }, { $set: { status } });
+
+        // If verified, create the User account so they can login
+        if (status === 'Verified') {
+            const users = db.collection("users");
+            const existingUser = await users.findOne({ email: society.accountEmail });
+            if (!existingUser) {
+                await users.insertOne({
+                    name: society.instituteName + " Society",
+                    email: society.accountEmail,
+                    password: society.password,
+                    verified: true, // Auto verified since admin vetted them
+                    isAdmin: false,
+                    isSociety: true,
+                    societyId: new ObjectId(id),
+                    createdAt: new Date()
+                });
+            }
+        }
+        
+        logActivity(`Society ${status}`, req.adminUser._id, `Society: ${society.instituteName}`);
+        res.status(200).json({ message: `Society marked as ${status}` });
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({ message: "Status update failed" });
+    }
+});
+
 app.get('/api/admin/stats', verifyAdmin, async (req, res) => {
     try {
         const users = await db.collection("users").countDocuments();
