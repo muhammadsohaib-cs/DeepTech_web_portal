@@ -452,7 +452,11 @@ const Home: React.FC = () => {
                 </div>
                 {/* Make the entire card a clickable link to external research or /projects */}
                 {post.link ? (
-                  <a href={post.link} target="_blank" rel="noopener noreferrer" className="absolute inset-0 z-30" />
+                  post.link.startsWith('http') ? (
+                    <a href={post.link} target="_blank" rel="noopener noreferrer" className="absolute inset-0 z-30" />
+                  ) : (
+                    <Link to={post.link} className="absolute inset-0 z-30" />
+                  )
                 ) : (
                   <Link to="/projects" className="absolute inset-0 z-30" />
                 )}

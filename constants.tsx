@@ -8,6 +8,7 @@ export const NAV_LINKS = [
   { name: 'About', href: '/about', external: false },
   { name: 'Society', href: '/society', external: false },
   { name: 'Projects', href: '/projects', external: false },
+  { name: 'Blogs', href: '/blogs', external: false },
   { name: 'Learning Hub', href: '/hub', external: false },
   { name: 'Contact', href: '/contact', external: false },
 ];
@@ -78,32 +79,12 @@ export const SUMMIT_PILLARS = [
 export const BLOG_POSTS: BlogPost[] = [
   {
     id: '1',
-    title: 'A new spin on quantum cryptography: Avoiding trapdoors and embracing public keys',
-    excerpt: 'An investigation of post-quantum cryptographic standards and their integration into existing sovereign defense networks.',
-    date: 'Dec 15, 2025',
-    author: 'Research Team',
+    title: 'What Happens When You Put Quantum Computing Inside Drug Discovery?',
+    excerpt: 'An eye-opening conversation with Dr. Shahar Keinan on using quantum computing to search billions of molecular possibilities and change how diseases get treated.',
+    date: 'Jul 11, 2026',
+    author: 'Neha Ahsan',
     category: 'Quantum Tech',
-    image: 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&q=80&w=1200',
-    link: 'https://arxiv.org/abs/1109.3235'
-  },
-  {
-    id: '2',
-    title: 'Functional Synthetic Biology',
-    excerpt: 'Evaluating the potential of engineered genomes and programming logic at the cellular level.',
-    date: 'Jan 05, 2026',
-    author: 'Biotech Lab',
-    category: 'Biotechnology',
-    image: 'https://images.unsplash.com/photo-1576086213369-97a306d36557?auto=format&fit=crop&q=80&w=1200',
-    link: 'https://arxiv.org/abs/2207.00538'
-  },
-  {
-    id: '3',
-    title: 'Synthetic Biology meets Neuromorphic Computing: Towards bio-inspired Perception',
-    excerpt: 'A study on neuromorphic chip architectures designed to mimic human neural pathways and reduce AI energy loads.',
-    date: 'Feb 12, 2026',
-    author: 'AI Core Group',
-    category: 'Artificial Intelligence',
-    image: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&q=80&w=1200',
-    link: 'https://arxiv.org/abs/2504.10053'
+    image: '/quantum_drug_discovery.png',
+    link: '/blog/quantum-computing-drug-discovery'
   }
 ];

@@ -19,6 +19,8 @@ import Society from './pages/Society';
 import SocietyRegistration from './pages/SocietyRegistration';
 import Hub from './pages/Hub';
 import Projects from './pages/Projects';
+import BlogArticle from './pages/BlogArticle';
+import Blogs from './pages/Blogs';
 import AdminLayout from './pages/Admin/AdminLayout';
 import AdminDash from './pages/Admin/Dashboard';
 import AdminUsers from './pages/Admin/Users';
@@ -43,6 +45,8 @@ const MainLayout = () => (
         <Route path="/society" element={<Society />} />
         <Route path="/hub" element={<Hub />} />
         <Route path="/projects" element={<Projects />} />
+        <Route path="/blogs" element={<Blogs />} />
+        <Route path="/blog/quantum-computing-drug-discovery" element={<BlogArticle />} />
         <Route path="/summit-2026" element={<Summit />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/why-attend" element={<WhyAttend />} />
