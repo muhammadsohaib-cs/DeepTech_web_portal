@@ -389,7 +389,7 @@ const About: React.FC = () => {
       </motion.section>
 
       {/* 🔹 LEADERSHIP & TEAM */}
-      <motion.section
+      {/* <motion.section
         className="py-24 bg-black/40 backdrop-blur-sm border-t border-white/5"
         initial="hidden"
         whileInView="visible"
@@ -421,20 +421,20 @@ const About: React.FC = () => {
                 className="group relative overflow-hidden rounded-[2rem] border border-white/10 bg-zinc-900/50 aspect-[4/5] hover:border-sky-500/30 shadow-2xl transition-all duration-500"
               >
                 {/* Image Background */}
-                <div className="absolute inset-0">
+                {/* <div className="absolute inset-0">
                   <div className="absolute inset-0 bg-sky-500/10 mix-blend-overlay z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                   <img
                     src={photo}
                     alt={TEAM_MEMBERS[i].name}
                     className="w-full h-full object-cover filter grayscale-[0.5] contrast-125 opacity-80 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 ease-out"
                   />
-                </div>
+                </div> */}
 
                 {/* Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-80 group-hover:opacity-95 transition-opacity duration-500 z-10" />
+                {/* <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-80 group-hover:opacity-95 transition-opacity duration-500 z-10" />
 
                 {/* Content */}
-                <div className="absolute inset-0 p-8 flex flex-col justify-end z-20 text-left">
+                {/* <div className="absolute inset-0 p-8 flex flex-col justify-end z-20 text-left">
                   <div className="transform translate-y-6 group-hover:translate-y-0 transition-transform duration-500 ease-out">
                     <div className="w-12 h-1 bg-gradient-to-r from-sky-400 to-blue-600 rounded-full mb-6 transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500 delay-100" />
 
@@ -452,15 +452,16 @@ const About: React.FC = () => {
                       </p>
                     </div>
                   </div>
-                </div>
+                </div> */}
 
                 {/* Subtle outer glow on hover */}
-                <div className="absolute inset-0 rounded-[2rem] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.05)] group-hover:shadow-[inset_0_0_0_1px_rgba(56,189,248,0.3),0_0_20px_rgba(56,189,248,0.15)] transition-all duration-500 z-30 pointer-events-none" />
+                {/* <div className="absolute inset-0 rounded-[2rem] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.05)] group-hover:shadow-[inset_0_0_0_1px_rgba(56,189,248,0.3),0_0_20px_rgba(56,189,248,0.15)] transition-all duration-500 z-30 pointer-events-none" />
               </motion.div>
             ))}
           </div>
         </div>
-      </motion.section>
+      // </motion.section>   
+      //  */}
 
       {/* 🔹 FINAL CONCLUSION */}
       <section className="py-24 bg-gradient-to-b from-black to-zinc-950 border-t border-white/5 relative">
